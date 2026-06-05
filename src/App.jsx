@@ -164,14 +164,15 @@ export default function App() {
   const [auth, setAuth] = useState(() => {
     try { return JSON.parse(localStorage.getItem("mawid_auth") || "null"); } catch { return null; }
   });
-  const [page, setPage] = useState("login");
-
-  useEffect(() => {
+  const [page, setPage] = useState(() => {
     const slug = getSlugFromUrl();
-    if (slug) { setPage("book:" + slug); return; }
-    if (auth) setPage(auth.user.role === "admin" ? "admin" : "owner");
-    else setPage("login");
-  }, []);
+    if (slug) return "book:" + slug;
+    try {
+      const a = JSON.parse(localStorage.getItem("mawid_auth") || "null");
+      if (a) return a.user.role === "admin" ? "admin" : "owner";
+    } catch {}
+    return "login";
+  });
 
   useEffect(() => {
     if (auth) {
