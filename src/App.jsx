@@ -289,7 +289,7 @@ function LandingPage({ onLogin, onRegister }) {
       <div style={{ textAlign: "center", padding: "16px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div style={{ fontSize: "12px", color: "#444" }}>© 2025 Mawids.com</div>
         <div style={{ marginTop: "8px" }}>
-          <a href="https://wa.me/971XXXXXXXXX" target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#25d166", textDecoration: "none" }}>
+          <a href="https://wa.me/971508177760" target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#25d166", textDecoration: "none" }}>
             💬 {ar ? "تواصل معنا" : "Contact us"}
           </a>
         </div>
@@ -497,15 +497,21 @@ function AdminDashboard({ token }) {
                     {s.status === "active" ? "نشط" : s.status === "pending" ? "معلق" : "موقوف"}
                   </span>
                 </div>
-                <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
                   <span style={{ ...badge(""), fontSize: "11px" }}>📋 {s.bookings || 0} حجز</span>
                   <span style={{ ...badge("green"), fontSize: "11px" }}>💰 {(s.totalAmount || 0).toLocaleString()} د.إ</span>
+                  {s.trial_ends_at && (
+                    <span style={{ ...badge(new Date(s.trial_ends_at) < new Date() ? "" : "green"), fontSize: "11px" }}>
+                      {new Date(s.trial_ends_at) < new Date() ? "⚠️ منتهي" : "⏳ ينتهي: " + new Date(s.trial_ends_at).toLocaleDateString("ar-AE")}
+                    </span>
+                  )}
                 </div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {s.status === "pending" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>✓ تفعيل</button>}
                   {s.status === "active" && <button style={S.btnDanger} onClick={() => setStatus(s.id, "suspended")}>⏸ إيقاف</button>}
                   {s.status === "suspended" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>▶ إعادة تفعيل</button>}
-                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>✏️ تعديل الخدمات والأوقات</button>
+                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>✏️ تعديل</button>
+                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px", color: "#ffd200" }} onClick={() => setEditingSaloon({ ...s, _trialEdit: true })}>🗓️ الاشتراك</button>
                 </div>
               </div>
             ))}
@@ -619,11 +625,14 @@ function UsersManager({ token, onMsg }) {
 }
 
 function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
-  const [tab, setTab] = useState("services");
+  const [tab, setTab] = useState(saloon._trialEdit ? "trial" : "services");
   const [services, setServices] = useState(saloon.services || []);
   const [days, setDays] = useState(saloon.work_days || []);
   const [times, setTimes] = useState(saloon.time_slots || []);
   const [loading, setLoading] = useState(false);
+  const toInputDate = (d) => d ? new Date(d).toISOString().slice(0, 10) : "";
+  const [trialStart, setTrialStart] = useState(toInputDate(saloon.trial_starts_at));
+  const [trialEnd, setTrialEnd] = useState(toInputDate(saloon.trial_ends_at));
 
   const ALL_DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   const DEFAULT_TIMES = [
@@ -676,6 +685,7 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
       <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
         <button style={tabStyle(tab === "services")} onClick={() => setTab("services")}>الخدمات</button>
         <button style={tabStyle(tab === "times")} onClick={() => setTab("times")}>الأوقات</button>
+        <button style={tabStyle(tab === "trial")} onClick={() => setTab("trial")}>🗓️ الاشتراك</button>
       </div>
 
       {tab === "services" && (
@@ -713,6 +723,49 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
             ))}
           </div>
           <button style={S.btn} onClick={saveTimes} disabled={loading}>{loading ? "جارٍ الحفظ..." : "حفظ الأوقات ✓"}</button>
+        </div>
+      )}
+
+      {tab === "trial" && (
+        <div style={S.card}>
+          <div style={S.sectionTitle}>🗓️ إدارة الاشتراك</div>
+
+          {/* حالة الاشتراك */}
+          <div style={{ padding: "14px", borderRadius: "12px", marginBottom: "16px", background: saloon.trial_ends_at && new Date(saloon.trial_ends_at) < new Date() ? "rgba(255,80,80,0.08)" : "rgba(37,211,102,0.08)", border: saloon.trial_ends_at && new Date(saloon.trial_ends_at) < new Date() ? "1px solid rgba(255,80,80,0.3)" : "1px solid rgba(37,211,102,0.3)" }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "6px" }}>
+              {saloon.trial_ends_at && new Date(saloon.trial_ends_at) < new Date() ? "⚠️ الاشتراك منتهي" : "✅ الاشتراك نشط"}
+            </div>
+            <div style={{ fontSize: "12px", color: "#888", lineHeight: "1.8" }}>
+              <div>البداية: {trialStart ? new Date(trialStart).toLocaleDateString("ar-AE") : "غير محدد"}</div>
+              <div>النهاية: {trialEnd ? new Date(trialEnd).toLocaleDateString("ar-AE") : "غير محدد"}</div>
+            </div>
+          </div>
+
+          {/* تعديل التواريخ */}
+          <div style={{ marginBottom: "12px" }}>
+            <div style={{ fontSize: "12px", color: "#888", marginBottom: "6px" }}>تاريخ البداية</div>
+            <input type="date" style={S.input} value={trialStart} onChange={e => setTrialStart(e.target.value)} />
+          </div>
+          <div style={{ marginBottom: "16px" }}>
+            <div style={{ fontSize: "12px", color: "#888", marginBottom: "6px" }}>تاريخ الانتهاء</div>
+            <input type="date" style={S.input} value={trialEnd} onChange={e => setTrialEnd(e.target.value)} />
+          </div>
+
+          {/* أزرار سريعة */}
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
+            <button style={{ ...S.btnGhost, fontSize: "12px" }} onClick={() => { const d = new Date(); d.setMonth(d.getMonth()+1); setTrialEnd(d.toISOString().slice(0,10)); }}>+ شهر</button>
+            <button style={{ ...S.btnGhost, fontSize: "12px" }} onClick={() => { const d = new Date(); d.setMonth(d.getMonth()+3); setTrialEnd(d.toISOString().slice(0,10)); }}>+ 3 أشهر</button>
+            <button style={{ ...S.btnGhost, fontSize: "12px" }} onClick={() => { const d = new Date(); d.setFullYear(d.getFullYear()+1); setTrialEnd(d.toISOString().slice(0,10)); }}>+ سنة</button>
+          </div>
+
+          <button style={S.btn} disabled={loading} onClick={async () => {
+            setLoading(true);
+            try {
+              await api(`/admin/saloons/${saloon.id}/trial`, "PATCH", { trial_starts_at: trialStart, trial_ends_at: trialEnd }, token);
+              onMsg("✓ تم حفظ الاشتراك");
+            } catch(e) { onMsg("❌ " + e.message); }
+            finally { setLoading(false); }
+          }}>{loading ? "جارٍ الحفظ..." : "حفظ الاشتراك ✓"}</button>
         </div>
       )}
     </div>
