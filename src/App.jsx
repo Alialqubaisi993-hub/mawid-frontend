@@ -810,9 +810,9 @@ function OwnerDashboard({ token, user, initSaloon }) {
                 <span style={badge("green")}>{b.time}</span>
               </div>
               <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
-                <a href={`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer"
+                <a href={`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}?text=${encodeURIComponent("أهلاً " + b.name + " 👋\nنذكّرك بموعدك:\n📋 " + b.service + "\n📅 " + b.day + " — " + b.time + "\nنتطلع لاستقبالك 🙏")}`} target="_blank" rel="noreferrer"
                   style={{ ...S.btnSuccess, textDecoration: "none" }}>💬 واتساب</a>
-                <a href={`tel:+${b.phone}`}
+                <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
                   style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "7px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "700" }}>📞 اتصال</a>
               </div>
             </div>
