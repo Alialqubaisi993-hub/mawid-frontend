@@ -243,7 +243,7 @@ function LoginPage({ onAuth, onRegister }) {
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
         <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>هل تريد تسجيل صالونك؟ تواصل معنا</div>
-        <a href="https://wa.me/00971508177760?text=أهلاً، أريد تسجيل صالوني في مَوعِد" target="_blank" rel="noreferrer"
+        <a href="https://wa.me/971508177760?text=أهلاً، أريد تسجيل صالوني في مَوعِد" target="_blank" rel="noreferrer"
           style={{ display: "inline-block", background: "linear-gradient(135deg,#25d166,#128C7E)", color: "#fff", padding: "10px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", fontWeight: "700" }}>
           💬 تواصل عبر واتساب
         </a>
