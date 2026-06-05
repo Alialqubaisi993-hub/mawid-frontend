@@ -659,8 +659,8 @@ function ServicesEditor({ saloon, token, onSave }) {
 function TimesEditor({ saloon, token, onSave }) {
   const ALL_DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   const DEFAULT_TIMES = ["8:00 ص","8:30 ص","9:00 ص","9:30 ص","10:00 ص","10:30 ص","11:00 ص","11:30 ص","12:00 م","1:00 م","1:30 م","2:00 م","2:30 م","3:00 م","3:30 م","4:00 م","4:30 م","5:00 م","5:30 م","6:00 م"];
-  const [days, setDays] = useState(saloon.workDays || []);
-  const [times, setTimes] = useState(saloon.timeSlots || []);
+  const [days, setDays] = useState(saloon.workDays || saloon.work_days || []);
+  const [times, setTimes] = useState(saloon.timeSlots || saloon.time_slots || []);
   const [loading, setLoading] = useState(false);
   const toggleDay = d => setDays(p => p.includes(d) ? p.filter(x => x !== d) : [...p, d]);
   const toggleTime = t => setTimes(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t]);
@@ -764,7 +764,7 @@ function BookingPage({ slug }) {
               <div style={S.card}>
                 <div style={S.sectionTitle}>اختر اليوم</div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                  {saloon?.workDays?.map(d => (
+                  {(saloon?.workDays || saloon?.work_days)?.map(d => (
                     <button key={d} onClick={() => { setSelected(p => ({ ...p, day: d, time: null })); setStep(Math.max(step, 3)); }}
                       style={{ padding: "8px 16px", borderRadius: "10px", fontFamily: "inherit", fontSize: "13px", fontWeight: "600", cursor: "pointer", border: selected.day === d ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.1)", background: selected.day === d ? "rgba(247,151,30,0.2)" : "rgba(255,255,255,0.04)", color: selected.day === d ? "#ffd200" : "#ccc" }}>{d}</button>
                   ))}
@@ -776,7 +776,7 @@ function BookingPage({ slug }) {
               <div style={S.card}>
                 <div style={S.sectionTitle}>اختر الوقت</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px" }}>
-                  {saloon?.timeSlots?.map(t => {
+                  {(saloon?.timeSlots || saloon?.time_slots)?.map(t => {
                     const booked = bookedSlots.includes(t);
                     const active = selected.time === t;
                     return (
