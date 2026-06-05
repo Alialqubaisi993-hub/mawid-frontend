@@ -241,11 +241,12 @@ function LoginPage({ onAuth, onRegister }) {
           <span style={{ color: "#ffd200", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>سجّل صالونك مجاناً</span>
         </div>
       </div>
-      <div style={{ ...S.card, background: "rgba(247,151,30,0.05)", border: "1px solid rgba(247,151,30,0.15)" }}>
-        <div style={{ fontSize: "12px", color: "#888", lineHeight: "1.8" }}>
-          <div style={{ color: "#ffd200", fontWeight: "700", marginBottom: "6px" }}>🔑 بيانات تجريبية</div>
-          <div>المدير: <span style={{ color: "#fff" }}>admin@mawid.app</span> / <span style={{ color: "#fff" }}>admin123</span></div>
-        </div>
+      <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
+        <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>هل تريد تسجيل صالونك؟ تواصل معنا</div>
+        <a href="https://wa.me/971XXXXXXXXX?text=أهلاً، أريد تسجيل صالوني في مَوعِد" target="_blank" rel="noreferrer"
+          style={{ display: "inline-block", background: "linear-gradient(135deg,#25d166,#128C7E)", color: "#fff", padding: "10px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", fontWeight: "700" }}>
+          💬 تواصل عبر واتساب
+        </a>
       </div>
     </div>
   );
@@ -306,8 +307,9 @@ function AdminDashboard({ token }) {
   const [saloons, setSaloons] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
-  const [editingSaloon, setEditingSaloon] = useState(null); // {saloon, tab}
+  const [editingSaloon, setEditingSaloon] = useState(null);
   const [msg, setMsg] = useState("");
+  const [adminTab, setAdminTab] = useState("saloons"); // saloons | users
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -342,16 +344,22 @@ function AdminDashboard({ token }) {
     );
   }
 
+  const tabStyle = active => ({
+    flex: 1, padding: "10px", borderRadius: "10px", border: "none",
+    background: active ? "linear-gradient(135deg,#f7971e,#ffd200)" : "rgba(255,255,255,0.04)",
+    color: active ? "#0a0a0f" : "#888", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", cursor: "pointer",
+  });
+
   return (
     <div style={S.container}>
-      <div style={{ marginBottom: "20px", paddingTop: "8px" }}>
+      <div style={{ marginBottom: "16px", paddingTop: "8px" }}>
         <div style={{ fontSize: "22px", fontWeight: "900" }}>لوحة المدير ⚙️</div>
         <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>إدارة جميع الصالونات</div>
       </div>
 
       {msg && <div style={S.success}>{msg}</div>}
 
-      {/* إحصائيات - صف أول */}
+      {/* إحصائيات */}
       <div style={S.statGrid}>
         <div style={S.statCard}><div style={S.statNum}>{stats.total || 0}</div><div style={S.statLabel}>إجمالي الصالونات</div></div>
         <div style={S.statCard}><div style={{ ...S.statNum, color: "#25d166" }}>{stats.active || 0}</div><div style={S.statLabel}>نشطة</div></div>
@@ -374,41 +382,148 @@ function AdminDashboard({ token }) {
         </div>
       </div>
 
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>جارٍ التحميل...</div>
-      ) : (
-        <div style={S.card}>
-          <div style={S.sectionTitle}>الصالونات المسجلة ({saloons.length})</div>
-          {saloons.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد صالونات بعد</div>}
-          {saloons.map(s => (
-            <div key={s.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "14px", marginBottom: "14px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                <div>
-                  <div style={{ fontSize: "15px", fontWeight: "800" }}>{s.name}</div>
-                  <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>{s.owner_name} — {s.city}</div>
-                  <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>mawid.app/book/{s.slug}</div>
+      {/* تابات */}
+      <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+        <button style={tabStyle(adminTab === "saloons")} onClick={() => setAdminTab("saloons")}>الصالونات</button>
+        <button style={tabStyle(adminTab === "users")} onClick={() => setAdminTab("users")}>المستخدمين</button>
+      </div>
+
+      {adminTab === "saloons" && (
+        loading ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>جارٍ التحميل...</div>
+        ) : (
+          <div style={S.card}>
+            <div style={S.sectionTitle}>الصالونات المسجلة ({saloons.length})</div>
+            {saloons.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد صالونات بعد</div>}
+            {saloons.map(s => (
+              <div key={s.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "14px", marginBottom: "14px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                  <div>
+                    <div style={{ fontSize: "15px", fontWeight: "800" }}>{s.name}</div>
+                    <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>{s.owner_name} — {s.city}</div>
+                    <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>mawids.com/book/{s.slug}</div>
+                  </div>
+                  <span style={badge(s.status === "active" ? "green" : s.status === "pending" ? "orange" : "")}>
+                    {s.status === "active" ? "نشط" : s.status === "pending" ? "معلق" : "موقوف"}
+                  </span>
                 </div>
-                <span style={badge(s.status === "active" ? "green" : s.status === "pending" ? "orange" : "")}>
-                  {s.status === "active" ? "نشط" : s.status === "pending" ? "معلق" : "موقوف"}
-                </span>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                  <span style={{ ...badge(""), fontSize: "11px" }}>📋 {s.bookings || 0} حجز</span>
+                  <span style={{ ...badge("green"), fontSize: "11px" }}>💰 {(s.totalAmount || 0).toLocaleString()} د.إ</span>
+                </div>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  {s.status === "pending" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>✓ تفعيل</button>}
+                  {s.status === "active" && <button style={S.btnDanger} onClick={() => setStatus(s.id, "suspended")}>⏸ إيقاف</button>}
+                  {s.status === "suspended" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>▶ إعادة تفعيل</button>}
+                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>✏️ تعديل الخدمات والأوقات</button>
+                </div>
               </div>
+            ))}
+          </div>
+        )
+      )}
 
-              {/* إحصائيات الصالون */}
-              <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-                <span style={{ ...badge(""), fontSize: "11px" }}>📋 {s.bookings || 0} حجز</span>
-                <span style={{ ...badge("green"), fontSize: "11px" }}>💰 {(s.totalAmount || 0).toLocaleString()} د.إ</span>
-              </div>
+      {adminTab === "users" && <UsersManager token={token} onMsg={showMsg} />}
+    </div>
+  );
+}
 
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {s.status === "pending" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>✓ تفعيل</button>}
-                {s.status === "active" && <button style={S.btnDanger} onClick={() => setStatus(s.id, "suspended")}>⏸ إيقاف</button>}
-                {s.status === "suspended" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>▶ إعادة تفعيل</button>}
-                <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>✏️ تعديل الخدمات والأوقات</button>
-              </div>
-            </div>
-          ))}
+
+function UsersManager({ token, onMsg }) {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "owner" });
+  const [editUser, setEditUser] = useState(null);
+  const f = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
+
+  const load = async () => {
+    setLoading(true);
+    try { const u = await api("/admin/users", "GET", null, token); setUsers(u); }
+    catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const addUser = async () => {
+    if (!form.name || !form.email || !form.password) return;
+    try {
+      await api("/admin/users", "POST", form, token);
+      setForm({ name: "", email: "", password: "", role: "owner" });
+      setShowAdd(false);
+      onMsg("✓ تم إضافة المستخدم");
+      load();
+    } catch (e) { onMsg("❌ " + e.message); }
+  };
+
+  const deleteUser = async (id) => {
+    if (!window.confirm("هل تريد حذف هذا المستخدم؟")) return;
+    try {
+      await api(`/admin/users/${id}`, "DELETE", null, token);
+      onMsg("✓ تم حذف المستخدم");
+      load();
+    } catch (e) { onMsg("❌ " + e.message); }
+  };
+
+  const resetPassword = async (id, newPass) => {
+    if (!newPass) return;
+    try {
+      await api(`/admin/users/${id}/password`, "PATCH", { password: newPass }, token);
+      setEditUser(null);
+      onMsg("✓ تم تغيير كلمة المرور");
+    } catch (e) { onMsg("❌ " + e.message); }
+  };
+
+  return (
+    <div style={S.card}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+        <div style={S.sectionTitle}>المستخدمين ({users.length})</div>
+        <button style={{ ...S.btnSuccess, fontSize: "12px" }} onClick={() => setShowAdd(!showAdd)}>+ إضافة</button>
+      </div>
+
+      {showAdd && (
+        <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "16px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ fontSize: "12px", color: "#f7971e", fontWeight: "700", marginBottom: "10px" }}>مستخدم جديد</div>
+          <input style={S.input} placeholder="الاسم" value={form.name} onChange={f("name")} />
+          <input style={S.input} placeholder="البريد الإلكتروني" type="email" value={form.email} onChange={f("email")} />
+          <input style={S.input} placeholder="كلمة المرور" type="password" value={form.password} onChange={f("password")} />
+          <select style={{ ...S.input, marginBottom: "10px" }} value={form.role} onChange={f("role")}>
+            <option value="owner">صاحب صالون</option>
+            <option value="admin">مدير</option>
+          </select>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button style={{ ...S.btn, flex: 1 }} onClick={addUser}>حفظ ✓</button>
+            <button style={{ ...S.btnGhost, flex: 1 }} onClick={() => setShowAdd(false)}>إلغاء</button>
+          </div>
         </div>
       )}
+
+      {loading && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>جارٍ التحميل...</div>}
+      {!loading && users.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا يوجد مستخدمون</div>}
+      {users.map(u => (
+        <div key={u.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "12px", marginBottom: "12px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div style={{ fontSize: "14px", fontWeight: "700" }}>{u.name}</div>
+              <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>{u.email}</div>
+            </div>
+            <span style={badge(u.role === "admin" ? "orange" : "green")}>{u.role === "admin" ? "مدير" : "صاحب صالون"}</span>
+          </div>
+          {editUser === u.id && (
+            <div style={{ marginTop: "10px", display: "flex", gap: "8px" }}>
+              <input style={{ ...S.input, marginBottom: "0", flex: 1 }} placeholder="كلمة مرور جديدة" type="password"
+                id={`pw_${u.id}`} />
+              <button style={S.btnSuccess} onClick={() => resetPassword(u.id, document.getElementById(`pw_${u.id}`).value)}>✓</button>
+              <button style={S.btnGhost} onClick={() => setEditUser(null)}>✕</button>
+            </div>
+          )}
+          <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+            <button style={{ ...S.btnGhost, fontSize: "11px", padding: "6px 12px" }} onClick={() => setEditUser(editUser === u.id ? null : u.id)}>🔑 تغيير كلمة المرور</button>
+            {u.role !== "admin" && <button style={{ ...S.btnDanger, fontSize: "11px" }} onClick={() => deleteUser(u.id)}>🗑️ حذف</button>}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
