@@ -712,6 +712,7 @@ function BookingPage({ slug }) {
 
   const confirm = async () => {
     if (!name || !phone) return setError("أدخل اسمك ورقم جوالك");
+    if (phone.replace(/\s+/g, "").length < 9) return setError("أدخل رقم الجوال كاملاً");
     setError("");
     try {
       await api(`/book/${slug}`, "POST", { name, phone, service: selected.service, day: selected.day, time: selected.time });
