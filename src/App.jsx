@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
 
@@ -171,7 +171,7 @@ export default function App() {
       const a = JSON.parse(localStorage.getItem("mawid_auth") || "null");
       if (a) return a.user.role === "admin" ? "admin" : "owner";
     } catch {}
-    return "login";
+    return "home";
   });
 
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function App() {
       if (!page.startsWith("book:")) setPage(auth.user.role === "admin" ? "admin" : "owner");
     } else {
       localStorage.removeItem("mawid_auth");
-      if (!page.startsWith("book:")) setPage("login");
+      if (!page.startsWith("book:")) setPage("home");
     }
   }, [auth]);
 
@@ -191,19 +191,109 @@ export default function App() {
   return (
     <div style={S.app}>
       <header style={S.header}>
-        <div style={S.logo}>مَوعِد ✦</div>
+        <div style={{ ...S.logo, cursor: "pointer" }} onClick={() => !auth && setPage("home")}>مَوعِد ✦</div>
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           {!auth && <>
             <button style={S.btnGhost} onClick={() => setPage("login")}>دخول</button>
-            <button style={{ ...S.btnGhost, color: "#ffd200", borderColor: "rgba(255,210,0,0.3)" }} onClick={() => setPage("register")}>سجّل صالونك</button>
+            <button style={{ ...S.btnGhost, color: "#ffd200", borderColor: "rgba(255,210,0,0.3)" }} onClick={() => setPage("register")}>سجّل نشاطك</button>
           </>}
           {auth && <button style={S.btnGhost} onClick={logout}>خروج ↩</button>}
         </div>
       </header>
+      {page === "home" && <LandingPage onLogin={() => setPage("login")} onRegister={() => setPage("register")} />}
       {page === "login" && <LoginPage onAuth={setAuth} onRegister={() => setPage("register")} />}
       {page === "register" && <RegisterPage onBack={() => setPage("login")} />}
       {page === "admin" && auth?.user.role === "admin" && <AdminDashboard token={auth.token} />}
       {page === "owner" && auth?.user.role === "owner" && <OwnerDashboard token={auth.token} user={auth.user} initSaloon={auth.saloon} />}
+    </div>
+  );
+}
+
+
+function LandingPage({ onLogin, onRegister }) {
+  const features = [
+    { icon: "📅", ar: "حجز ذكي", en: "Smart Booking", descAr: "زبائنك يحجزون بدون اتصال أو انتظار", descEn: "Clients book instantly without calls" },
+    { icon: "💰", ar: "إحصائيات مالية", en: "Financial Stats", descAr: "تتبع حجوزاتك وإيراداتك لحظة بلحظة", descEn: "Track bookings and revenue in real-time" },
+    { icon: "🔔", ar: "إشعارات فورية", en: "Instant Alerts", descAr: "إشعار واتساب لكل حجز جديد", descEn: "WhatsApp notification for every booking" },
+  ];
+  const categories = [
+    { icon: "💇", ar: "صالونات الحلاقة", en: "Hair Salons" },
+    { icon: "🏋️", ar: "مدربو الجيم", en: "Gym Trainers" },
+    { icon: "🎯", ar: "لايف كوتش", en: "Life Coaches" },
+    { icon: "💼", ar: "رجال الأعمال", en: "Business Owners" },
+  ];
+  const [lang, setLang] = React.useState("ar");
+  const ar = lang === "ar";
+
+  return (
+    <div style={{ direction: ar ? "rtl" : "ltr" }}>
+      {/* زر تبديل اللغة */}
+      <div style={{ display: "flex", justifyContent: ar ? "flex-start" : "flex-end", padding: "8px 24px" }}>
+        <button style={{ ...S.btnGhost, fontSize: "12px", padding: "5px 12px" }} onClick={() => setLang(ar ? "en" : "ar")}>
+          {ar ? "English" : "عربي"}
+        </button>
+      </div>
+
+      {/* Hero */}
+      <div style={{ textAlign: "center", padding: "40px 24px 32px" }}>
+        <div style={{ display: "inline-block", background: "rgba(247,151,30,0.1)", border: "1px solid rgba(247,151,30,0.3)", borderRadius: "20px", padding: "6px 16px", fontSize: "12px", color: "#f7971e", marginBottom: "20px" }}>
+          {ar ? "منصة إدارة الحجوزات" : "Booking Management Platform"}
+        </div>
+        <h1 style={{ fontSize: "36px", fontWeight: "900", lineHeight: "1.4", margin: "0 0 16px", color: "#fff" }}>
+          {ar ? <>لا تنسَ موعدك<br/><span style={{ background: "linear-gradient(135deg,#f7971e,#ffd200)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>نحن ننظّمه لك</span></> : <><span style={{ background: "linear-gradient(135deg,#f7971e,#ffd200)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Never miss</span><br/>an appointment</>}
+        </h1>
+        <p style={{ fontSize: "14px", color: "#888", maxWidth: "380px", margin: "0 auto 28px", lineHeight: "1.8" }}>
+          {ar ? "منصة احترافية لإدارة حجوزات الصالونات والمدربين والكوتش وأصحاب الأعمال" : "A professional platform for managing bookings for salons, trainers, coaches and businesses"}
+        </p>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+          <button style={S.btn} onClick={onRegister}>{ar ? "سجّل نشاطك مجاناً ←" : "Register for free →"}</button>
+          <button style={S.btnGhost} onClick={onLogin}>{ar ? "تسجيل الدخول" : "Sign in"}</button>
+        </div>
+      </div>
+
+      {/* المميزات */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "10px", padding: "0 20px 32px" }}>
+        {features.map((f, i) => (
+          <div key={i} style={{ ...S.card, textAlign: "center", padding: "16px 12px", marginBottom: 0 }}>
+            <div style={{ fontSize: "24px", marginBottom: "8px" }}>{f.icon}</div>
+            <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "6px" }}>{ar ? f.ar : f.en}</div>
+            <div style={{ fontSize: "11px", color: "#888", lineHeight: "1.7" }}>{ar ? f.descAr : f.descEn}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* مناسب لكل نشاط */}
+      <div style={{ padding: "0 20px 32px" }}>
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <div style={{ fontSize: "18px", fontWeight: "900", marginBottom: "6px" }}>{ar ? "مناسب لكل نشاط تجاري" : "For every business"}</div>
+          <div style={{ fontSize: "13px", color: "#888" }}>{ar ? "صالونات — مدربون — كوتش — وأكثر" : "Salons — Trainers — Coaches — and more"}</div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "10px" }}>
+          {categories.map((c, i) => (
+            <div key={i} style={{ background: "rgba(247,151,30,0.06)", border: "1px solid rgba(247,151,30,0.2)", borderRadius: "12px", padding: "14px 16px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <span style={{ fontSize: "22px" }}>{c.icon}</span>
+              <span style={{ fontSize: "13px", fontWeight: "700" }}>{ar ? c.ar : c.en}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div style={{ textAlign: "center", padding: "28px 24px 32px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ fontSize: "20px", fontWeight: "900", marginBottom: "8px" }}>{ar ? "جاهز تبدأ؟" : "Ready to start?"}</div>
+        <div style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>{ar ? "سجّل نشاطك الآن وابدأ تستقبل حجوزات" : "Register now and start accepting bookings"}</div>
+        <button style={S.btn} onClick={onRegister}>{ar ? "ابدأ مجاناً ←" : "Start for free →"}</button>
+      </div>
+
+      {/* فوتر */}
+      <div style={{ textAlign: "center", padding: "16px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div style={{ fontSize: "12px", color: "#444" }}>© 2025 Mawids.com</div>
+        <div style={{ marginTop: "8px" }}>
+          <a href="https://wa.me/971508177760" target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#25d166", textDecoration: "none" }}>
+            💬 {ar ? "تواصل معنا" : "Contact us"}
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
@@ -243,7 +333,7 @@ function LoginPage({ onAuth, onRegister }) {
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
         <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>هل تريد تسجيل صالونك؟ تواصل معنا</div>
-        <a href="https://wa.me/971508177760?text=أهلاً، أريد تسجيل صالوني في مَوعِد" target="_blank" rel="noreferrer"
+        <a href="https://wa.me/971XXXXXXXXX?text=أهلاً، أريد تسجيل صالوني في مَوعِد" target="_blank" rel="noreferrer"
           style={{ display: "inline-block", background: "linear-gradient(135deg,#25d166,#128C7E)", color: "#fff", padding: "10px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", fontWeight: "700" }}>
           💬 تواصل عبر واتساب
         </a>
