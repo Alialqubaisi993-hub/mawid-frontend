@@ -856,6 +856,77 @@ function FinancialReport({ token }) {
     setTo(end.toISOString().slice(0, 10));
   };
 
+  const downloadPDF = () => {
+    if (!report) return;
+    const rows = (report.bookings || []).map(b =>
+      `<tr>
+        <td style="padding:8px 12px; border-bottom:1px solid #eee;">${b.name}</td>
+        <td style="padding:8px 12px; border-bottom:1px solid #eee;">${b.service}</td>
+        <td style="padding:8px 12px; border-bottom:1px solid #eee;">${b.day} ${b.time}</td>
+        <td style="padding:8px 12px; border-bottom:1px solid #eee;">${new Date(b.created_at).toLocaleDateString("ar-AE")}</td>
+        <td style="padding:8px 12px; border-bottom:1px solid #eee; font-weight:bold; color:#f7971e;">${b.price || 0} د.إ</td>
+      </tr>`
+    ).join("");
+
+    const html = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>التقرير المالي — مَوعِد</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 40px; color: #1a1a1a; background: #fff; }
+  h1 { font-size: 28px; font-weight: 900; color: #f7971e; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+  .period { font-size: 14px; color: #555; margin-bottom: 24px; }
+  .summary { display: flex; gap: 16px; margin-bottom: 28px; }
+  .summary-card { background: #f8f8f8; border-radius: 12px; padding: 16px 24px; flex: 1; text-align: center; border: 1px solid #eee; }
+  .summary-num { font-size: 28px; font-weight: 900; color: #f7971e; }
+  .summary-num.green { color: #25d166; }
+  .summary-label { font-size: 12px; color: #888; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead { background: #1a1a2e; color: #fff; }
+  thead th { padding: 10px 12px; text-align: right; font-weight: 700; }
+  tbody tr:hover { background: #fafafa; }
+  .footer { margin-top: 32px; text-align: center; font-size: 12px; color: #aaa; }
+</style>
+</head>
+<body>
+<h1>مَوعِد ✦ — التقرير المالي</h1>
+<div class="subtitle">Mawids.com — منصة إدارة الحجوزات</div>
+<div class="period">الفترة: من ${from} إلى ${to}</div>
+<div class="summary">
+  <div class="summary-card">
+    <div class="summary-num">${report.totalBookings}</div>
+    <div class="summary-label">إجمالي الحجوزات</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-num green">${(report.totalAmount || 0).toLocaleString()} د.إ</div>
+    <div class="summary-label">إجمالي المبالغ</div>
+  </div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>اسم الزبون</th>
+      <th>الخدمة</th>
+      <th>الموعد</th>
+      <th>التاريخ</th>
+      <th>المبلغ</th>
+    </tr>
+  </thead>
+  <tbody>${rows}</tbody>
+</table>
+<div class="footer">تم إنشاء هذا التقرير بواسطة مَوعِد — ${new Date().toLocaleDateString("ar-AE")}</div>
+</body>
+</html>`;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => win.print(), 800);
+  };
+
   return (
     <div style={S.card}>
       <div style={S.sectionTitle}>📊 التقرير المالي</div>
@@ -894,6 +965,11 @@ function FinancialReport({ token }) {
               <div style={S.statLabel}>إجمالي المبالغ (د.إ)</div>
             </div>
           </div>
+
+          {/* زر تحميل PDF */}
+          <button style={{ ...S.btnGhost, width: "100%", marginBottom: "14px", color: "#ffd200", borderColor: "rgba(255,210,0,0.3)" }} onClick={downloadPDF}>
+            📄 تحميل التقرير PDF
+          </button>
 
           {/* التفاصيل */}
           <div style={S.sectionTitle}>تفاصيل الحجوزات</div>
