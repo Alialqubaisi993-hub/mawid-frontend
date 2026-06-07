@@ -445,41 +445,52 @@ function AdminDashboard({ token }) {
 
   return (
     <div style={S.container}>
-      <div style={{ marginBottom: "16px", paddingTop: "8px" }}>
-        <div style={{ fontSize: "22px", fontWeight: "900" }}>لوحة المدير ⚙️</div>
-        <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>إدارة جميع الأنشطة</div>
+      {/* هيدر */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", marginBottom: "16px" }}>
+        <div>
+          <div style={{ fontSize: "11px", color: "#555", letterSpacing: "2px", marginBottom: "2px" }}>MAWIDS</div>
+          <div style={{ fontSize: "18px", fontWeight: "900", color: "#fff" }}>لوحة التحكم</div>
+        </div>
+        {stats.pending > 0 && (
+          <div style={{ background: "rgba(255,150,50,0.15)", border: "1px solid rgba(255,150,50,0.4)", borderRadius: "20px", padding: "4px 12px", fontSize: "11px", color: "#ff9632", fontWeight: "700" }}>
+            🔔 {stats.pending} معلق
+          </div>
+        )}
       </div>
 
       {msg && <div style={S.success}>{msg}</div>}
 
-      {/* إحصائيات */}
-      <div style={S.statGrid}>
-        <div style={S.statCard}><div style={S.statNum}>{stats.total || 0}</div><div style={S.statLabel}>إجمالي الأنشطة</div></div>
-        <div style={S.statCard}><div style={{ ...S.statNum, color: "#25d166" }}>{stats.active || 0}</div><div style={S.statLabel}>نشطة</div></div>
-        <div style={S.statCard}><div style={{ ...S.statNum, color: "#ff9632" }}>{stats.pending || 0}</div><div style={S.statLabel}>تنتظر الموافقة</div></div>
-        <div style={S.statCard}><div style={S.statNum}>{stats.totalBookings || 0}</div><div style={S.statLabel}>إجمالي الحجوزات</div></div>
-      </div>
-
-      {/* إحصائيات مالية */}
-      <div style={{ ...S.card, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)", marginBottom: "16px" }}>
-        <div style={S.sectionTitle}>💰 الإحصائيات المالية</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "26px", fontWeight: "900", color: "#c9a84c" }}>{stats.totalBookings || 0}</div>
-            <div style={{ fontSize: "11px", color: "#888", marginTop: "4px" }}>إجمالي الحجوزات</div>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "26px", fontWeight: "900", color: "#25d166" }}>{(stats.totalAmount || 0).toLocaleString()} <span style={{ fontSize: "13px" }}>د.إ</span></div>
-            <div style={{ fontSize: "11px", color: "#888", marginTop: "4px" }}>إجمالي المبالغ</div>
-          </div>
+      {/* إحصائيات - 4 في صف */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "6px", marginBottom: "10px" }}>
+        <div style={{ background: "#141414", border: "1px solid rgba(201,168,76,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+          <div style={{ fontSize: "20px", fontWeight: "900", color: "#c9a84c" }}>{stats.total || 0}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>نشاط</div>
+        </div>
+        <div style={{ background: "#141414", border: "1px solid rgba(37,209,102,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+          <div style={{ fontSize: "20px", fontWeight: "900", color: "#25d166" }}>{stats.active || 0}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>نشط</div>
+        </div>
+        <div style={{ background: "#141414", border: "1px solid rgba(255,150,50,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+          <div style={{ fontSize: "20px", fontWeight: "900", color: "#ff9632" }}>{stats.pending || 0}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>معلق</div>
+        </div>
+        <div style={{ background: "#141414", border: "1px solid rgba(100,160,255,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+          <div style={{ fontSize: "20px", fontWeight: "900", color: "#64a0ff" }}>{stats.totalBookings || 0}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>حجز</div>
         </div>
       </div>
 
+      {/* إجمالي المبالغ */}
+      <div style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: "12px", padding: "12px 16px", marginBottom: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: "12px", color: "#555" }}>💰 إجمالي المبالغ</span>
+        <span style={{ fontSize: "18px", fontWeight: "900", color: "#25d166" }}>{(stats.totalAmount || 0).toLocaleString()} <span style={{ fontSize: "11px" }}>د.إ</span></span>
+      </div>
+
       {/* تابات */}
-      <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-        <button style={tabStyle(adminTab === "saloons")} onClick={() => setAdminTab("saloons")}>الأنشطة</button>
-        <button style={tabStyle(adminTab === "bookings")} onClick={() => setAdminTab("bookings")}>الحجوزات</button>
-        <button style={tabStyle(adminTab === "users")} onClick={() => setAdminTab("users")}>المستخدمين</button>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "6px", marginBottom: "16px" }}>
+        <button style={{ background: adminTab === "saloons" ? "#c9a84c" : "#141414", border: adminTab === "saloons" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "saloons" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("saloons")}>🏢 الأنشطة</button>
+        <button style={{ background: adminTab === "bookings" ? "#c9a84c" : "#141414", border: adminTab === "bookings" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "bookings" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("bookings")}>📋 الحجوزات</button>
+        <button style={{ background: adminTab === "users" ? "#c9a84c" : "#141414", border: adminTab === "users" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "users" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("users")}>👥 المستخدمين</button>
       </div>
 
       {adminTab === "saloons" && (
@@ -926,36 +937,52 @@ function OwnerDashboard({ token, user, initSaloon }) {
 
   return (
     <div style={S.container}>
-      <div style={{ paddingTop: "8px", marginBottom: "16px" }}>
-        <div style={{ fontSize: "18px", fontWeight: "900" }}>{saloon?.name || "..."}</div>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center", marginTop: "4px" }}>
-          <span style={badge(saloon?.status === "active" ? "green" : "orange")}>
-            {saloon?.status === "active" ? "نشط ✓" : "غير مفعّل"}
-          </span>
-          <span style={{ fontSize: "12px", color: "#888" }}>مرحباً {user.name}</span>
+      {/* هيدر */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", marginBottom: "14px" }}>
+        <div>
+          <div style={{ fontSize: "11px", color: "#555", letterSpacing: "2px", marginBottom: "2px" }}>MAWIDS</div>
+          <div style={{ fontSize: "16px", fontWeight: "900", color: "#fff" }}>{saloon?.name || "..."}</div>
+        </div>
+        <span style={badge(saloon?.status === "active" ? "green" : "orange")}>
+          {saloon?.status === "active" ? "نشط ✓" : "غير مفعّل"}
+        </span>
+      </div>
+
+      {msg && <div style={S.success}>{msg}</div>}
+
+      {/* إحصائيات سريعة */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "6px", marginBottom: "10px" }}>
+        <div style={{ background: "#141414", border: "1px solid rgba(201,168,76,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+          <div style={{ fontSize: "20px", fontWeight: "900", color: "#c9a84c" }}>{bookings.length}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>مواعيد اليوم</div>
+        </div>
+        <div style={{ background: "#141414", border: "1px solid rgba(37,209,102,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+          <div style={{ fontSize: "20px", fontWeight: "900", color: "#25d166" }}>{(saloon?.services || []).length}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>الخدمات</div>
+        </div>
+        <div style={{ background: "#141414", border: "1px solid rgba(100,160,255,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+          <div style={{ fontSize: "20px", fontWeight: "900", color: "#64a0ff" }}>{(saloon?.work_days || []).length}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>أيام العمل</div>
         </div>
       </div>
 
+      {/* رابط الحجز */}
       {saloon?.status === "active" && (
-        <div style={{ ...S.card, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>
-          <div style={S.sectionTitle}>رابط الحجز الخاص بنشاطك</div>
-          <div style={{ fontSize: "13px", color: "#c9a84c", wordBreak: "break-all", marginBottom: "10px", lineHeight: "1.6" }}>
-            {window.location.origin}/book/{saloon.slug}
-          </div>
-          <button style={{ ...S.btn, padding: "10px", fontSize: "13px" }} onClick={copyLink}>
-            {copied ? "✓ تم النسخ!" : "📋 نسخ الرابط"}
+        <div style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "12px", padding: "12px 14px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px" }}>
+          <div style={{ fontSize: "11px", color: "#c9a84c", wordBreak: "break-all", flex: 1 }}>🔗 {window.location.origin}/book/{saloon.slug}</div>
+          <button style={{ ...S.btn, padding: "8px 14px", fontSize: "11px", whiteSpace: "nowrap", width: "auto" }} onClick={copyLink}>
+            {copied ? "✓ نُسخ" : "📋 نسخ"}
           </button>
         </div>
       )}
 
-      <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-        <button style={tabStyle(tab === "bookings")} onClick={() => setTab("bookings")}>المواعيد</button>
-        <button style={tabStyle(tab === "services")} onClick={() => setTab("services")}>الخدمات</button>
-        <button style={tabStyle(tab === "times")} onClick={() => setTab("times")}>الأوقات</button>
-        <button style={tabStyle(tab === "report")} onClick={() => setTab("report")}>📊 تقرير</button>
+      {/* تابات */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "5px", marginBottom: "14px" }}>
+        <button style={{ background: tab === "bookings" ? "#c9a84c" : "#141414", border: tab === "bookings" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "bookings" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("bookings")}>📋 مواعيد</button>
+        <button style={{ background: tab === "services" ? "#c9a84c" : "#141414", border: tab === "services" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "services" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("services")}>✂️ خدمات</button>
+        <button style={{ background: tab === "times" ? "#c9a84c" : "#141414", border: tab === "times" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "times" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("times")}>🕐 أوقات</button>
+        <button style={{ background: tab === "report" ? "#c9a84c" : "#141414", border: tab === "report" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "report" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("report")}>📊 تقرير</button>
       </div>
-
-      {msg && <div style={S.success}>{msg}</div>}
 
       {tab === "bookings" && (
         <div style={S.card}>
