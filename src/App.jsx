@@ -474,7 +474,7 @@ function AdminDashboard({ token }) {
 
       {/* تابات */}
       <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-        <button style={tabStyle(adminTab === "saloons")} onClick={() => setAdminTab("saloons")}>الصالونات</button>
+        <button style={tabStyle(adminTab === "saloons")} onClick={() => setAdminTab("saloons")}>الأنشطة</button>
         <button style={tabStyle(adminTab === "users")} onClick={() => setAdminTab("users")}>المستخدمين</button>
       </div>
 
