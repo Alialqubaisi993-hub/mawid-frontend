@@ -5,13 +5,13 @@ const API = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
 const S = {
   app: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #0a0a0f 0%, #111118 60%, #0d0d14 100%)",
+    background: "#0c0c0c",
     fontFamily: "'Cairo', 'Segoe UI', sans-serif",
     direction: "rtl",
     color: "#fff",
   },
   header: {
-    background: "rgba(255,255,255,0.03)",
+    background: "#141414",
     backdropFilter: "blur(20px)",
     borderBottom: "1px solid rgba(255,255,255,0.06)",
     padding: "14px 24px",
@@ -25,13 +25,13 @@ const S = {
   logo: {
     fontSize: "20px",
     fontWeight: "900",
-    background: "linear-gradient(135deg, #f7971e, #ffd200)",
+    background: "#c9a84c",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
   },
   container: { maxWidth: "480px", margin: "0 auto", padding: "24px 16px" },
   card: {
-    background: "rgba(255,255,255,0.04)",
+    background: "#141414",
     backdropFilter: "blur(20px)",
     borderRadius: "20px",
     border: "1px solid rgba(255,255,255,0.08)",
@@ -40,7 +40,7 @@ const S = {
   },
   sectionTitle: {
     fontSize: "11px",
-    color: "#f7971e",
+    color: "#c9a84c",
     fontWeight: "700",
     marginBottom: "14px",
     letterSpacing: "1.5px",
@@ -48,8 +48,8 @@ const S = {
   },
   input: {
     width: "100%",
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.1)",
+    background: "#1a1a1a",
+    border: "1px solid rgba(201,168,76,0.2)",
     borderRadius: "12px",
     padding: "12px 16px",
     color: "#fff",
@@ -65,17 +65,17 @@ const S = {
     padding: "13px",
     borderRadius: "12px",
     border: "none",
-    background: "linear-gradient(135deg, #f7971e, #ffd200)",
-    color: "#0a0a0f",
+    background: "#c9a84c",
+    color: "#0c0c0c",
     fontSize: "15px",
     fontWeight: "800",
     fontFamily: "inherit",
     cursor: "pointer",
   },
   btnGhost: {
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    color: "#ccc",
+    background: "#1a1a1a",
+    border: "1px solid rgba(201,168,76,0.2)",
+    color: "#888",
     padding: "8px 16px",
     borderRadius: "10px",
     cursor: "pointer",
@@ -107,13 +107,13 @@ const S = {
   },
   statGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" },
   statCard: {
-    background: "rgba(255,255,255,0.04)",
+    background: "#141414",
     border: "1px solid rgba(255,255,255,0.07)",
     borderRadius: "14px",
     padding: "16px",
     textAlign: "center",
   },
-  statNum: { fontSize: "28px", fontWeight: "900", color: "#ffd200" },
+  statNum: { fontSize: "28px", fontWeight: "900", color: "#c9a84c" },
   statLabel: { fontSize: "11px", color: "#888", marginTop: "4px" },
   error: {
     background: "rgba(255,80,80,0.1)",
@@ -140,7 +140,7 @@ const badge = (color) => ({
   borderRadius: "20px",
   fontSize: "11px",
   fontWeight: "700",
-  background: color === "green" ? "rgba(37,211,102,0.15)" : color === "orange" ? "rgba(255,150,50,0.15)" : "rgba(255,255,255,0.08)",
+  background: color === "green" ? "rgba(37,211,102,0.15)" : color === "orange" ? "rgba(255,150,50,0.15)" : "rgba(201,168,76,0.12)",
   border: `1px solid ${color === "green" ? "rgba(37,211,102,0.4)" : color === "orange" ? "rgba(255,150,50,0.4)" : "rgba(255,255,255,0.12)"}`,
   color: color === "green" ? "#25d166" : color === "orange" ? "#ff9632" : "#aaa",
 });
@@ -191,11 +191,14 @@ export default function App() {
   return (
     <div style={S.app}>
       <header style={S.header}>
-        <div style={{ ...S.logo, cursor: "pointer" }} onClick={() => !auth && setPage("home")}>مَوعِد ✦</div>
+        <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "flex-start" }} onClick={() => !auth && setPage("home")}>
+          <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", letterSpacing: "3px" }}>MAWIDS</div>
+          <div style={{ fontSize: "9px", color: "#555", letterSpacing: "2px", marginTop: "1px" }}>مَوعِد</div>
+        </div>
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           {!auth && <>
             <button style={S.btnGhost} onClick={() => setPage("login")}>دخول</button>
-            <button style={{ ...S.btnGhost, color: "#ffd200", borderColor: "rgba(255,210,0,0.3)" }} onClick={() => setPage("register")}>سجّل نشاطك</button>
+            <button style={{ ...S.btnGhost, color: "#c9a84c", borderColor: "rgba(255,210,0,0.3)" }} onClick={() => setPage("register")}>سجّل نشاطك</button>
           </>}
           {auth && <button style={S.btnGhost} onClick={logout}>خروج ↩</button>}
         </div>
@@ -236,11 +239,11 @@ function LandingPage({ onLogin, onRegister }) {
 
       {/* Hero */}
       <div style={{ textAlign: "center", padding: "40px 24px 32px" }}>
-        <div style={{ display: "inline-block", background: "rgba(247,151,30,0.1)", border: "1px solid rgba(247,151,30,0.3)", borderRadius: "20px", padding: "6px 16px", fontSize: "12px", color: "#f7971e", marginBottom: "20px" }}>
+        <div style={{ display: "inline-block", background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "20px", padding: "6px 16px", fontSize: "12px", color: "#c9a84c", marginBottom: "20px" }}>
           {ar ? "منصة إدارة الحجوزات" : "Booking Management Platform"}
         </div>
         <h1 style={{ fontSize: "36px", fontWeight: "900", lineHeight: "1.4", margin: "0 0 16px", color: "#fff" }}>
-          {ar ? <>لا تنسَ موعدك<br/><span style={{ background: "linear-gradient(135deg,#f7971e,#ffd200)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>نحن ننظّمه لك</span></> : <><span style={{ background: "linear-gradient(135deg,#f7971e,#ffd200)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Never miss</span><br/>an appointment</>}
+          {ar ? <>لا تنسَ موعدك<br/><span style={{ background: "#c9a84c", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>نحن ننظّمه لك</span></> : <><span style={{ background: "#c9a84c", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Never miss</span><br/>an appointment</>}
         </h1>
         <p style={{ fontSize: "14px", color: "#888", maxWidth: "380px", margin: "0 auto 28px", lineHeight: "1.8" }}>
           {ar ? "منصة احترافية لإدارة الحجوزات للأنشطة التجارية والمدربين والكوتش وأصحاب الأعمال" : "A professional platform for managing bookings for salons, trainers, coaches and businesses"}
@@ -270,7 +273,7 @@ function LandingPage({ onLogin, onRegister }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "10px" }}>
           {categories.map((c, i) => (
-            <div key={i} style={{ background: "rgba(247,151,30,0.06)", border: "1px solid rgba(247,151,30,0.2)", borderRadius: "12px", padding: "14px 16px", display: "flex", alignItems: "center", gap: "10px" }}>
+            <div key={i} style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "12px", padding: "14px 16px", display: "flex", alignItems: "center", gap: "10px" }}>
               <span style={{ fontSize: "22px" }}>{c.icon}</span>
               <span style={{ fontSize: "13px", fontWeight: "700" }}>{ar ? c.ar : c.en}</span>
             </div>
@@ -328,7 +331,7 @@ function LoginPage({ onAuth, onRegister }) {
         <button style={S.btn} onClick={login} disabled={loading}>{loading ? "جارٍ الدخول..." : "دخول ←"}</button>
         <div style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#888" }}>
           ما عندك حساب؟{" "}
-          <span style={{ color: "#ffd200", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>سجّل نشاطك مجاناً</span>
+          <span style={{ color: "#c9a84c", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>سجّل نشاطك مجاناً</span>
         </div>
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
@@ -360,7 +363,7 @@ function RegisterPage({ onBack }) {
   if (done) return (
     <div style={S.container}>
       <div style={{ ...S.card, textAlign: "center", padding: "40px 24px" }}>
-        <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "linear-gradient(135deg,#f7971e,#ffd200)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 20px" }}>✓</div>
+        <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 20px" }}>✓</div>
         <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "8px" }}>تم إرسال الطلب!</div>
         <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>سيتواصل معك فريق مَوعِد خلال 24 ساعة<br />لتفعيل حسابك وإرسال رابط الحجز الخاص بنشاطك 🎉</div>
         <button style={{ ...S.btn, marginTop: "24px" }} onClick={onBack}>رجوع للدخول</button>
@@ -436,8 +439,8 @@ function AdminDashboard({ token }) {
 
   const tabStyle = active => ({
     flex: 1, padding: "10px", borderRadius: "10px", border: "none",
-    background: active ? "linear-gradient(135deg,#f7971e,#ffd200)" : "rgba(255,255,255,0.04)",
-    color: active ? "#0a0a0f" : "#888", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", cursor: "pointer",
+    background: active ? "#c9a84c" : "#141414",
+    color: active ? "#0c0c0c" : "#888", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", cursor: "pointer",
   });
 
   return (
@@ -458,11 +461,11 @@ function AdminDashboard({ token }) {
       </div>
 
       {/* إحصائيات مالية */}
-      <div style={{ ...S.card, background: "rgba(247,151,30,0.06)", border: "1px solid rgba(247,151,30,0.2)", marginBottom: "16px" }}>
+      <div style={{ ...S.card, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)", marginBottom: "16px" }}>
         <div style={S.sectionTitle}>💰 الإحصائيات المالية</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "26px", fontWeight: "900", color: "#ffd200" }}>{stats.totalBookings || 0}</div>
+            <div style={{ fontSize: "26px", fontWeight: "900", color: "#c9a84c" }}>{stats.totalBookings || 0}</div>
             <div style={{ fontSize: "11px", color: "#888", marginTop: "4px" }}>إجمالي الحجوزات</div>
           </div>
           <div style={{ textAlign: "center" }}>
@@ -573,8 +576,8 @@ function UsersManager({ token, onMsg }) {
       </div>
 
       {showAdd && (
-        <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "16px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
-          <div style={{ fontSize: "12px", color: "#f7971e", fontWeight: "700", marginBottom: "10px" }}>مستخدم جديد</div>
+        <div style={{ background: "#141414", borderRadius: "12px", padding: "16px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ fontSize: "12px", color: "#c9a84c", fontWeight: "700", marginBottom: "10px" }}>مستخدم جديد</div>
           <input style={S.input} placeholder="الاسم" value={form.name} onChange={f("name")} />
           <input style={S.input} placeholder="البريد الإلكتروني" type="email" value={form.email} onChange={f("email")} />
           <input style={S.input} placeholder="كلمة المرور" type="password" value={form.password} onChange={f("password")} />
@@ -641,8 +644,8 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
 
   const tabStyle = active => ({
     flex: 1, padding: "10px", borderRadius: "10px", border: "none",
-    background: active ? "linear-gradient(135deg,#f7971e,#ffd200)" : "rgba(255,255,255,0.04)",
-    color: active ? "#0a0a0f" : "#888", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", cursor: "pointer",
+    background: active ? "#c9a84c" : "#141414",
+    color: active ? "#0c0c0c" : "#888", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", cursor: "pointer",
   });
 
   const saveServices = async () => {
@@ -682,7 +685,7 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
         <div style={S.card}>
           <div style={S.sectionTitle}>الخدمات والأسعار</div>
           {services.map(s => (
-            <div key={s.id} style={{ marginBottom: "12px", padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div key={s.id} style={{ marginBottom: "12px", padding: "12px", background: "#141414", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
               <input style={{ ...S.input, marginBottom: "6px" }} placeholder="اسم الخدمة" value={s.name} onChange={e => setServices(p => p.map(x => x.id === s.id ? { ...x, name: e.target.value } : x))} />
               <div style={{ display: "flex", gap: "8px" }}>
                 <input style={{ ...S.input, marginBottom: "0", flex: 1 }} placeholder="المدة" value={s.duration} onChange={e => setServices(p => p.map(x => x.id === s.id ? { ...x, duration: e.target.value } : x))} />
@@ -691,7 +694,7 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
               </div>
             </div>
           ))}
-          <button style={{ ...S.btnGhost, width: "100%", marginBottom: "10px", color: "#ffd200" }} onClick={() => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "" }])}>+ إضافة خدمة</button>
+          <button style={{ ...S.btnGhost, width: "100%", marginBottom: "10px", color: "#c9a84c" }} onClick={() => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "" }])}>+ إضافة خدمة</button>
           <button style={S.btn} onClick={saveServices} disabled={loading}>{loading ? "جارٍ الحفظ..." : "حفظ الخدمات ✓"}</button>
         </div>
       )}
@@ -701,14 +704,14 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
           <div style={S.sectionTitle}>أيام العمل</div>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
             {ALL_DAYS.map(d => (
-              <button key={d} style={{ padding: "7px 14px", borderRadius: "10px", border: days.includes(d) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.1)", background: days.includes(d) ? "rgba(247,151,30,0.2)" : "rgba(255,255,255,0.04)", color: days.includes(d) ? "#ffd200" : "#ccc", cursor: "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "inherit" }}
+              <button key={d} style={{ padding: "7px 14px", borderRadius: "10px", border: days.includes(d) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.1)", background: days.includes(d) ? "rgba(201,168,76,0.2)" : "#141414", color: days.includes(d) ? "#c9a84c" : "#ccc", cursor: "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "inherit" }}
                 onClick={() => setDays(p => p.includes(d) ? p.filter(x => x !== d) : [...p, d])}>{d}</button>
             ))}
           </div>
           <div style={S.sectionTitle}>أوقات المواعيد</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px", marginBottom: "16px" }}>
             {DEFAULT_TIMES.map(t => (
-              <button key={t} style={{ padding: "9px", borderRadius: "9px", border: times.includes(t) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.08)", background: times.includes(t) ? "rgba(247,151,30,0.2)" : "rgba(255,255,255,0.03)", color: times.includes(t) ? "#ffd200" : "#888", cursor: "pointer", fontSize: "12px", fontWeight: "600", fontFamily: "inherit", textAlign: "center" }}
+              <button key={t} style={{ padding: "9px", borderRadius: "9px", border: times.includes(t) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.08)", background: times.includes(t) ? "rgba(201,168,76,0.2)" : "#141414", color: times.includes(t) ? "#c9a84c" : "#888", cursor: "pointer", fontSize: "12px", fontWeight: "600", fontFamily: "inherit", textAlign: "center" }}
                 onClick={() => setTimes(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t])}>{t}</button>
             ))}
           </div>
@@ -749,8 +752,8 @@ function OwnerDashboard({ token, user, initSaloon }) {
 
   const tabStyle = active => ({
     flex: 1, padding: "10px", borderRadius: "10px", border: "none",
-    background: active ? "linear-gradient(135deg,#f7971e,#ffd200)" : "rgba(255,255,255,0.04)",
-    color: active ? "#0a0a0f" : "#888", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", cursor: "pointer",
+    background: active ? "#c9a84c" : "#141414",
+    color: active ? "#0c0c0c" : "#888", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", cursor: "pointer",
   });
 
   if (!saloon && !loading) return (
@@ -776,9 +779,9 @@ function OwnerDashboard({ token, user, initSaloon }) {
       </div>
 
       {saloon?.status === "active" && (
-        <div style={{ ...S.card, background: "rgba(247,151,30,0.06)", border: "1px solid rgba(247,151,30,0.2)" }}>
+        <div style={{ ...S.card, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>
           <div style={S.sectionTitle}>رابط الحجز الخاص بنشاطك</div>
-          <div style={{ fontSize: "13px", color: "#ffd200", wordBreak: "break-all", marginBottom: "10px", lineHeight: "1.6" }}>
+          <div style={{ fontSize: "13px", color: "#c9a84c", wordBreak: "break-all", marginBottom: "10px", lineHeight: "1.6" }}>
             {window.location.origin}/book/{saloon.slug}
           </div>
           <button style={{ ...S.btn, padding: "10px", fontSize: "13px" }} onClick={copyLink}>
@@ -967,7 +970,7 @@ function FinancialReport({ token }) {
           </div>
 
           {/* زر تحميل PDF */}
-          <button style={{ ...S.btnGhost, width: "100%", marginBottom: "14px", color: "#ffd200", borderColor: "rgba(255,210,0,0.3)" }} onClick={downloadPDF}>
+          <button style={{ ...S.btnGhost, width: "100%", marginBottom: "14px", color: "#c9a84c", borderColor: "rgba(255,210,0,0.3)" }} onClick={downloadPDF}>
             📄 تحميل التقرير PDF
           </button>
 
@@ -984,7 +987,7 @@ function FinancialReport({ token }) {
                   <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{b.service} — {b.day} {b.time}</div>
                   <div style={{ fontSize: "10px", color: "#555", marginTop: "2px" }}>{new Date(b.created_at).toLocaleDateString("ar-AE")}</div>
                 </div>
-                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffd200" }}>{b.price || 0} د.إ</div>
+                <div style={{ fontSize: "14px", fontWeight: "800", color: "#c9a84c" }}>{b.price || 0} د.إ</div>
               </div>
             </div>
           ))}
@@ -1010,7 +1013,7 @@ function ServicesEditor({ saloon, token, onSave }) {
     <div style={S.card}>
       <div style={S.sectionTitle}>الخدمات والأسعار</div>
       {services.map(s => (
-        <div key={s.id} style={{ marginBottom: "12px", padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <div key={s.id} style={{ marginBottom: "12px", padding: "12px", background: "#141414", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
           <input style={{ ...S.input, marginBottom: "6px" }} placeholder="اسم الخدمة" value={s.name} onChange={e => update(s.id, "name", e.target.value)} />
           <div style={{ display: "flex", gap: "8px" }}>
             <input style={{ ...S.input, marginBottom: "0", flex: 1 }} placeholder="المدة" value={s.duration} onChange={e => update(s.id, "duration", e.target.value)} />
@@ -1019,7 +1022,7 @@ function ServicesEditor({ saloon, token, onSave }) {
           </div>
         </div>
       ))}
-      <button style={{ ...S.btnGhost, width: "100%", marginBottom: "10px", color: "#ffd200" }} onClick={add}>+ إضافة خدمة</button>
+      <button style={{ ...S.btnGhost, width: "100%", marginBottom: "10px", color: "#c9a84c" }} onClick={add}>+ إضافة خدمة</button>
       <button style={S.btn} onClick={save} disabled={loading}>{loading ? "جارٍ الحفظ..." : "حفظ الخدمات ✓"}</button>
     </div>
   );
@@ -1044,13 +1047,13 @@ function TimesEditor({ saloon, token, onSave }) {
       <div style={S.sectionTitle}>أيام العمل</div>
       <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
         {ALL_DAYS.map(d => (
-          <button key={d} style={{ padding: "7px 14px", borderRadius: "10px", border: days.includes(d) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.1)", background: days.includes(d) ? "rgba(247,151,30,0.2)" : "rgba(255,255,255,0.04)", color: days.includes(d) ? "#ffd200" : "#ccc", cursor: "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "inherit" }} onClick={() => toggleDay(d)}>{d}</button>
+          <button key={d} style={{ padding: "7px 14px", borderRadius: "10px", border: days.includes(d) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.1)", background: days.includes(d) ? "rgba(201,168,76,0.2)" : "#141414", color: days.includes(d) ? "#c9a84c" : "#ccc", cursor: "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "inherit" }} onClick={() => toggleDay(d)}>{d}</button>
         ))}
       </div>
       <div style={S.sectionTitle}>أوقات المواعيد</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px", marginBottom: "16px" }}>
         {DEFAULT_TIMES.map(t => (
-          <button key={t} style={{ padding: "9px", borderRadius: "9px", border: times.includes(t) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.08)", background: times.includes(t) ? "rgba(247,151,30,0.2)" : "rgba(255,255,255,0.03)", color: times.includes(t) ? "#ffd200" : "#888", cursor: "pointer", fontSize: "12px", fontWeight: "600", fontFamily: "inherit", textAlign: "center" }} onClick={() => toggleTime(t)}>{t}</button>
+          <button key={t} style={{ padding: "9px", borderRadius: "9px", border: times.includes(t) ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.08)", background: times.includes(t) ? "rgba(201,168,76,0.2)" : "#141414", color: times.includes(t) ? "#c9a84c" : "#888", cursor: "pointer", fontSize: "12px", fontWeight: "600", fontFamily: "inherit", textAlign: "center" }} onClick={() => toggleTime(t)}>{t}</button>
         ))}
       </div>
       <button style={S.btn} onClick={save} disabled={loading}>{loading ? "جارٍ الحفظ..." : "حفظ الأوقات ✓"}</button>
@@ -1100,13 +1103,16 @@ function BookingPage({ slug }) {
   return (
     <div style={S.app}>
       <header style={S.header}>
-        <div style={S.logo}>مَوعِد ✦</div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ fontSize: "14px", fontWeight: "900", color: "#c9a84c", letterSpacing: "3px" }}>MAWIDS</div>
+          <div style={{ fontSize: "8px", color: "#555", letterSpacing: "2px" }}>مَوعِد</div>
+        </div>
         <div style={{ fontSize: "14px", fontWeight: "700", color: "#ccc" }}>{saloon?.name}</div>
       </header>
       <div style={S.container}>
         {done ? (
           <div style={{ ...S.card, textAlign: "center", padding: "40px 24px", marginTop: "20px" }}>
-            <div style={{ width: "70px", height: "70px", borderRadius: "50%", background: "linear-gradient(135deg,#f7971e,#ffd200)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px", margin: "0 auto 20px" }}>✓</div>
+            <div style={{ width: "70px", height: "70px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px", margin: "0 auto 20px" }}>✓</div>
             <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "10px" }}>تم الحجز بنجاح! 🎉</div>
             <div style={{ fontSize: "13px", color: "#888", lineHeight: "2" }}>
               <div><span style={{ color: "#fff" }}>{selected.service}</span></div>
@@ -1120,12 +1126,12 @@ function BookingPage({ slug }) {
               <div style={S.sectionTitle}>اختر الخدمة</div>
               {saloon?.services?.map(sv => (
                 <div key={sv.id} onClick={() => { setSelected(p => ({ ...p, service: sv.name })); setStep(Math.max(step, 2)); }}
-                  style={{ padding: "14px 16px", borderRadius: "14px", cursor: "pointer", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", background: selected.service === sv.name ? "rgba(247,151,30,0.15)" : "rgba(255,255,255,0.03)", border: selected.service === sv.name ? "1px solid rgba(247,151,30,0.5)" : "1px solid rgba(255,255,255,0.07)" }}>
+                  style={{ padding: "14px 16px", borderRadius: "14px", cursor: "pointer", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", background: selected.service === sv.name ? "rgba(201,168,76,0.15)" : "#141414", border: selected.service === sv.name ? "1px solid rgba(201,168,76,0.5)" : "1px solid rgba(255,255,255,0.07)" }}>
                   <div>
                     <div style={{ fontSize: "14px", fontWeight: "700" }}>{sv.name}</div>
                     <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{sv.duration}</div>
                   </div>
-                  <div style={{ fontSize: "16px", fontWeight: "800", color: "#ffd200" }}>{sv.price} د.إ</div>
+                  <div style={{ fontSize: "16px", fontWeight: "800", color: "#c9a84c" }}>{sv.price} د.إ</div>
                 </div>
               ))}
             </div>
@@ -1136,7 +1142,7 @@ function BookingPage({ slug }) {
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {(saloon?.workDays || saloon?.work_days)?.map(d => (
                     <button key={d} onClick={() => { setSelected(p => ({ ...p, day: d, time: null })); setStep(Math.max(step, 3)); }}
-                      style={{ padding: "8px 16px", borderRadius: "10px", fontFamily: "inherit", fontSize: "13px", fontWeight: "600", cursor: "pointer", border: selected.day === d ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.1)", background: selected.day === d ? "rgba(247,151,30,0.2)" : "rgba(255,255,255,0.04)", color: selected.day === d ? "#ffd200" : "#ccc" }}>{d}</button>
+                      style={{ padding: "8px 16px", borderRadius: "10px", fontFamily: "inherit", fontSize: "13px", fontWeight: "600", cursor: "pointer", border: selected.day === d ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.1)", background: selected.day === d ? "rgba(201,168,76,0.2)" : "#141414", color: selected.day === d ? "#c9a84c" : "#ccc" }}>{d}</button>
                   ))}
                 </div>
               </div>
@@ -1151,7 +1157,7 @@ function BookingPage({ slug }) {
                     const active = selected.time === t;
                     return (
                       <button key={t} disabled={booked} onClick={() => { setSelected(p => ({ ...p, time: t })); setStep(Math.max(step, 4)); }}
-                        style={{ padding: "10px", borderRadius: "9px", fontFamily: "inherit", fontSize: "12px", fontWeight: "600", textAlign: "center", cursor: booked ? "not-allowed" : "pointer", border: booked ? "1px solid rgba(255,255,255,0.04)" : active ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.08)", background: booked ? "rgba(255,255,255,0.02)" : active ? "rgba(247,151,30,0.2)" : "rgba(255,255,255,0.04)", color: booked ? "#333" : active ? "#ffd200" : "#aaa", textDecoration: booked ? "line-through" : "none" }}>{t}</button>
+                        style={{ padding: "10px", borderRadius: "9px", fontFamily: "inherit", fontSize: "12px", fontWeight: "600", textAlign: "center", cursor: booked ? "not-allowed" : "pointer", border: booked ? "1px solid rgba(255,255,255,0.04)" : active ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.08)", background: booked ? "rgba(255,255,255,0.02)" : active ? "rgba(201,168,76,0.2)" : "#141414", color: booked ? "#333" : active ? "#c9a84c" : "#aaa", textDecoration: booked ? "line-through" : "none" }}>{t}</button>
                     );
                   })}
                 </div>
@@ -1164,7 +1170,7 @@ function BookingPage({ slug }) {
                 {error && <div style={S.error}>{error}</div>}
                 <input style={S.input} placeholder="اسمك الكريم" value={name} onChange={e => setName(e.target.value)} />
                 <input style={S.input} placeholder="رقم الجوال" value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
-                <div style={{ padding: "12px", background: "rgba(247,151,30,0.06)", borderRadius: "10px", marginBottom: "12px", fontSize: "13px", lineHeight: "2", color: "#ccc" }}>
+                <div style={{ padding: "12px", background: "rgba(201,168,76,0.06)", borderRadius: "10px", marginBottom: "12px", fontSize: "13px", lineHeight: "2", color: "#ccc" }}>
                   <div>📋 <strong style={{ color: "#fff" }}>{selected.service}</strong></div>
                   <div>📅 <strong style={{ color: "#fff" }}>{selected.day}</strong></div>
                   <div>🕐 <strong style={{ color: "#fff" }}>{selected.time}</strong></div>
