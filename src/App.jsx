@@ -243,7 +243,7 @@ function LandingPage({ onLogin, onRegister }) {
           {ar ? <>لا تنسَ موعدك<br/><span style={{ background: "linear-gradient(135deg,#f7971e,#ffd200)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>نحن ننظّمه لك</span></> : <><span style={{ background: "linear-gradient(135deg,#f7971e,#ffd200)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Never miss</span><br/>an appointment</>}
         </h1>
         <p style={{ fontSize: "14px", color: "#888", maxWidth: "380px", margin: "0 auto 28px", lineHeight: "1.8" }}>
-          {ar ? "منصة احترافية لإدارة حجوزات الصالونات والمدربين والكوتش وأصحاب الأعمال" : "A professional platform for managing bookings for salons, trainers, coaches and businesses"}
+          {ar ? "منصة احترافية لإدارة الحجوزات للأنشطة التجارية والمدربين والكوتش وأصحاب الأعمال" : "A professional platform for managing bookings for salons, trainers, coaches and businesses"}
         </p>
         <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
           <button style={S.btn} onClick={onRegister}>{ar ? "سجّل نشاطك مجاناً ←" : "Register for free →"}</button>
@@ -266,7 +266,7 @@ function LandingPage({ onLogin, onRegister }) {
       <div style={{ padding: "0 20px 32px" }}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <div style={{ fontSize: "18px", fontWeight: "900", marginBottom: "6px" }}>{ar ? "مناسب لكل نشاط تجاري" : "For every business"}</div>
-          <div style={{ fontSize: "13px", color: "#888" }}>{ar ? "صالونات — مدربون — كوتش — وأكثر" : "Salons — Trainers — Coaches — and more"}</div>
+          <div style={{ fontSize: "13px", color: "#888" }}>{ar ? "أنشطة — مدربون — كوتش — وأكثر" : "Salons — Trainers — Coaches — and more"}</div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "10px" }}>
           {categories.map((c, i) => (
@@ -947,7 +947,7 @@ function BookingPage({ slug }) {
             <div style={{ fontSize: "13px", color: "#888", lineHeight: "2" }}>
               <div><span style={{ color: "#fff" }}>{selected.service}</span></div>
               <div><span style={{ color: "#fff" }}>{selected.day} — {selected.time}</span></div>
-              <div style={{ marginTop: "8px" }}>سيتواصل معك الصالون للتأكيد</div>
+              <div style={{ marginTop: "8px" }}>سيتواصل معك صاحب النشاط للتأكيد</div>
             </div>
           </div>
         ) : (
