@@ -289,7 +289,7 @@ function LandingPage({ onLogin, onRegister }) {
       <div style={{ textAlign: "center", padding: "16px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div style={{ fontSize: "12px", color: "#444" }}>© 2025 Mawids.com</div>
         <div style={{ marginTop: "8px" }}>
-          <a href="https://wa.me/971508177760" target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#25d166", textDecoration: "none" }}>
+          <a href="https://wa.me/971XXXXXXXXX" target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#25d166", textDecoration: "none" }}>
             💬 {ar ? "تواصل معنا" : "Contact us"}
           </a>
         </div>
@@ -318,7 +318,7 @@ function LoginPage({ onAuth, onRegister }) {
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "28px", paddingTop: "16px" }}>
         <div style={{ fontSize: "32px", fontWeight: "900", marginBottom: "6px" }}>أهلاً بك 👋</div>
-        <div style={{ fontSize: "13px", color: "#888" }}>سجّل دخولك لإدارة صالونك</div>
+        <div style={{ fontSize: "13px", color: "#888" }}>سجّل دخولك لإدارة نشاطك</div>
       </div>
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
@@ -328,12 +328,12 @@ function LoginPage({ onAuth, onRegister }) {
         <button style={S.btn} onClick={login} disabled={loading}>{loading ? "جارٍ الدخول..." : "دخول ←"}</button>
         <div style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#888" }}>
           ما عندك حساب؟{" "}
-          <span style={{ color: "#ffd200", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>سجّل صالونك مجاناً</span>
+          <span style={{ color: "#ffd200", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>سجّل نشاطك مجاناً</span>
         </div>
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
-        <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>هل تريد تسجيل صالونك؟ تواصل معنا</div>
-        <a href="https://wa.me/971XXXXXXXXX?text=أهلاً، أريد تسجيل صالوني في مَوعِد" target="_blank" rel="noreferrer"
+        <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>هل تريد تسجيل نشاطك؟ تواصل معنا</div>
+        <a href="https://wa.me/971XXXXXXXXX?text=أهلاً، أريد تسجيل نشاطي في مَوعِد" target="_blank" rel="noreferrer"
           style={{ display: "inline-block", background: "linear-gradient(135deg,#25d166,#128C7E)", color: "#fff", padding: "10px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", fontWeight: "700" }}>
           💬 تواصل عبر واتساب
         </a>
@@ -343,14 +343,14 @@ function LoginPage({ onAuth, onRegister }) {
 }
 
 function RegisterPage({ onBack }) {
-  const [form, setForm] = useState({ name: "", email: "", password: "", saloonName: "", phone: "", city: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", activityName: "", phone: "", city: "" });
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const f = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
   const submit = async () => {
-    if (!form.name || !form.email || !form.password || !form.saloonName || !form.phone) return setError("جميع الحقول مطلوبة");
+    if (!form.name || !form.email || !form.password || !form.activityName || !form.phone) return setError("جميع الحقول مطلوبة");
     setLoading(true); setError("");
     try { await api("/auth/register", "POST", form); setDone(true); }
     catch (e) { setError(e.message); }
@@ -362,7 +362,7 @@ function RegisterPage({ onBack }) {
       <div style={{ ...S.card, textAlign: "center", padding: "40px 24px" }}>
         <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "linear-gradient(135deg,#f7971e,#ffd200)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 20px" }}>✓</div>
         <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "8px" }}>تم إرسال الطلب!</div>
-        <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>سيتواصل معك فريق مَوعِد خلال 24 ساعة<br />لتفعيل حسابك وإرسال رابط الحجز الخاص بك 🎉</div>
+        <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>سيتواصل معك فريق مَوعِد خلال 24 ساعة<br />لتفعيل حسابك وإرسال رابط الحجز الخاص بنشاطك 🎉</div>
         <button style={{ ...S.btn, marginTop: "24px" }} onClick={onBack}>رجوع للدخول</button>
       </div>
     </div>
@@ -371,7 +371,7 @@ function RegisterPage({ onBack }) {
   return (
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "24px", paddingTop: "16px" }}>
-        <div style={{ fontSize: "26px", fontWeight: "900" }}>سجّل صالونك 🏪</div>
+        <div style={{ fontSize: "26px", fontWeight: "900" }}>سجّل نشاطك 🏪</div>
         <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>مجاني تماماً في البداية</div>
       </div>
       <div style={S.card}>
@@ -380,8 +380,8 @@ function RegisterPage({ onBack }) {
         <input style={S.input} placeholder="اسمك" value={form.name} onChange={f("name")} />
         <input style={S.input} type="email" placeholder="البريد الإلكتروني" value={form.email} onChange={f("email")} />
         <input style={S.input} type="password" placeholder="كلمة المرور" value={form.password} onChange={f("password")} />
-        <div style={{ ...S.sectionTitle, marginTop: "8px" }}>بيانات الصالون</div>
-        <input style={S.input} placeholder="اسم الصالون" value={form.saloonName} onChange={f("saloonName")} />
+        <div style={{ ...S.sectionTitle, marginTop: "8px" }}>بيانات النشاط</div>
+        <input style={S.input} placeholder="اسم النشاط" value={form.activityName} onChange={f("activityName")} />
         <input style={S.input} placeholder="رقم الجوال (واتساب)" value={form.phone} onChange={f("phone")} type="tel" />
         <input style={S.input} placeholder="المدينة (أبوظبي، دبي...)" value={form.city} onChange={f("city")} />
         <button style={S.btn} onClick={submit} disabled={loading}>{loading ? "جارٍ الإرسال..." : "إرسال الطلب ✓"}</button>
@@ -444,14 +444,14 @@ function AdminDashboard({ token }) {
     <div style={S.container}>
       <div style={{ marginBottom: "16px", paddingTop: "8px" }}>
         <div style={{ fontSize: "22px", fontWeight: "900" }}>لوحة المدير ⚙️</div>
-        <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>إدارة جميع الصالونات</div>
+        <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>إدارة جميع الأنشطة</div>
       </div>
 
       {msg && <div style={S.success}>{msg}</div>}
 
       {/* إحصائيات */}
       <div style={S.statGrid}>
-        <div style={S.statCard}><div style={S.statNum}>{stats.total || 0}</div><div style={S.statLabel}>إجمالي الصالونات</div></div>
+        <div style={S.statCard}><div style={S.statNum}>{stats.total || 0}</div><div style={S.statLabel}>إجمالي الأنشطة</div></div>
         <div style={S.statCard}><div style={{ ...S.statNum, color: "#25d166" }}>{stats.active || 0}</div><div style={S.statLabel}>نشطة</div></div>
         <div style={S.statCard}><div style={{ ...S.statNum, color: "#ff9632" }}>{stats.pending || 0}</div><div style={S.statLabel}>تنتظر الموافقة</div></div>
         <div style={S.statCard}><div style={S.statNum}>{stats.totalBookings || 0}</div><div style={S.statLabel}>إجمالي الحجوزات</div></div>
@@ -483,8 +483,8 @@ function AdminDashboard({ token }) {
           <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>جارٍ التحميل...</div>
         ) : (
           <div style={S.card}>
-            <div style={S.sectionTitle}>الصالونات المسجلة ({saloons.length})</div>
-            {saloons.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد صالونات بعد</div>}
+            <div style={S.sectionTitle}>الأنشطة المسجلة ({saloons.length})</div>
+            {saloons.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد أنشطة بعد</div>}
             {saloons.map(s => (
               <div key={s.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "14px", marginBottom: "14px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
@@ -497,21 +497,15 @@ function AdminDashboard({ token }) {
                     {s.status === "active" ? "نشط" : s.status === "pending" ? "معلق" : "موقوف"}
                   </span>
                 </div>
-                <div style={{ display: "flex", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
                   <span style={{ ...badge(""), fontSize: "11px" }}>📋 {s.bookings || 0} حجز</span>
                   <span style={{ ...badge("green"), fontSize: "11px" }}>💰 {(s.totalAmount || 0).toLocaleString()} د.إ</span>
-                  {s.trial_ends_at && (
-                    <span style={{ ...badge(new Date(s.trial_ends_at) < new Date() ? "" : "green"), fontSize: "11px" }}>
-                      {new Date(s.trial_ends_at) < new Date() ? "⚠️ منتهي" : "⏳ ينتهي: " + new Date(s.trial_ends_at).toLocaleDateString("ar-AE")}
-                    </span>
-                  )}
                 </div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {s.status === "pending" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>✓ تفعيل</button>}
                   {s.status === "active" && <button style={S.btnDanger} onClick={() => setStatus(s.id, "suspended")}>⏸ إيقاف</button>}
                   {s.status === "suspended" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>▶ إعادة تفعيل</button>}
-                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>✏️ تعديل</button>
-                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px", color: "#ffd200" }} onClick={() => setEditingSaloon({ ...s, _trialEdit: true })}>🗓️ الاشتراك</button>
+                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>✏️ تعديل الخدمات والأوقات</button>
                 </div>
               </div>
             ))}
@@ -585,7 +579,7 @@ function UsersManager({ token, onMsg }) {
           <input style={S.input} placeholder="البريد الإلكتروني" type="email" value={form.email} onChange={f("email")} />
           <input style={S.input} placeholder="كلمة المرور" type="password" value={form.password} onChange={f("password")} />
           <select style={{ ...S.input, marginBottom: "10px" }} value={form.role} onChange={f("role")}>
-            <option value="owner">صاحب صالون</option>
+            <option value="owner">صاحب نشاط</option>
             <option value="admin">مدير</option>
           </select>
           <div style={{ display: "flex", gap: "8px" }}>
@@ -604,7 +598,7 @@ function UsersManager({ token, onMsg }) {
               <div style={{ fontSize: "14px", fontWeight: "700" }}>{u.name}</div>
               <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>{u.email}</div>
             </div>
-            <span style={badge(u.role === "admin" ? "orange" : "green")}>{u.role === "admin" ? "مدير" : "صاحب صالون"}</span>
+            <span style={badge(u.role === "admin" ? "orange" : "green")}>{u.role === "admin" ? "مدير" : "صاحب نشاط"}</span>
           </div>
           {editUser === u.id && (
             <div style={{ marginTop: "10px", display: "flex", gap: "8px" }}>
@@ -625,14 +619,11 @@ function UsersManager({ token, onMsg }) {
 }
 
 function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
-  const [tab, setTab] = useState(saloon._trialEdit ? "trial" : "services");
+  const [tab, setTab] = useState("services");
   const [services, setServices] = useState(saloon.services || []);
   const [days, setDays] = useState(saloon.work_days || []);
   const [times, setTimes] = useState(saloon.time_slots || []);
   const [loading, setLoading] = useState(false);
-  const toInputDate = (d) => d ? new Date(d).toISOString().slice(0, 10) : "";
-  const [trialStart, setTrialStart] = useState(toInputDate(saloon.trial_starts_at));
-  const [trialEnd, setTrialEnd] = useState(toInputDate(saloon.trial_ends_at));
 
   const ALL_DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   const DEFAULT_TIMES = [
@@ -685,7 +676,6 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
       <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
         <button style={tabStyle(tab === "services")} onClick={() => setTab("services")}>الخدمات</button>
         <button style={tabStyle(tab === "times")} onClick={() => setTab("times")}>الأوقات</button>
-        <button style={tabStyle(tab === "trial")} onClick={() => setTab("trial")}>🗓️ الاشتراك</button>
       </div>
 
       {tab === "services" && (
@@ -723,49 +713,6 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
             ))}
           </div>
           <button style={S.btn} onClick={saveTimes} disabled={loading}>{loading ? "جارٍ الحفظ..." : "حفظ الأوقات ✓"}</button>
-        </div>
-      )}
-
-      {tab === "trial" && (
-        <div style={S.card}>
-          <div style={S.sectionTitle}>🗓️ إدارة الاشتراك</div>
-
-          {/* حالة الاشتراك */}
-          <div style={{ padding: "14px", borderRadius: "12px", marginBottom: "16px", background: saloon.trial_ends_at && new Date(saloon.trial_ends_at) < new Date() ? "rgba(255,80,80,0.08)" : "rgba(37,211,102,0.08)", border: saloon.trial_ends_at && new Date(saloon.trial_ends_at) < new Date() ? "1px solid rgba(255,80,80,0.3)" : "1px solid rgba(37,211,102,0.3)" }}>
-            <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "6px" }}>
-              {saloon.trial_ends_at && new Date(saloon.trial_ends_at) < new Date() ? "⚠️ الاشتراك منتهي" : "✅ الاشتراك نشط"}
-            </div>
-            <div style={{ fontSize: "12px", color: "#888", lineHeight: "1.8" }}>
-              <div>البداية: {trialStart ? new Date(trialStart).toLocaleDateString("ar-AE") : "غير محدد"}</div>
-              <div>النهاية: {trialEnd ? new Date(trialEnd).toLocaleDateString("ar-AE") : "غير محدد"}</div>
-            </div>
-          </div>
-
-          {/* تعديل التواريخ */}
-          <div style={{ marginBottom: "12px" }}>
-            <div style={{ fontSize: "12px", color: "#888", marginBottom: "6px" }}>تاريخ البداية</div>
-            <input type="date" style={S.input} value={trialStart} onChange={e => setTrialStart(e.target.value)} />
-          </div>
-          <div style={{ marginBottom: "16px" }}>
-            <div style={{ fontSize: "12px", color: "#888", marginBottom: "6px" }}>تاريخ الانتهاء</div>
-            <input type="date" style={S.input} value={trialEnd} onChange={e => setTrialEnd(e.target.value)} />
-          </div>
-
-          {/* أزرار سريعة */}
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
-            <button style={{ ...S.btnGhost, fontSize: "12px" }} onClick={() => { const d = new Date(); d.setMonth(d.getMonth()+1); setTrialEnd(d.toISOString().slice(0,10)); }}>+ شهر</button>
-            <button style={{ ...S.btnGhost, fontSize: "12px" }} onClick={() => { const d = new Date(); d.setMonth(d.getMonth()+3); setTrialEnd(d.toISOString().slice(0,10)); }}>+ 3 أشهر</button>
-            <button style={{ ...S.btnGhost, fontSize: "12px" }} onClick={() => { const d = new Date(); d.setFullYear(d.getFullYear()+1); setTrialEnd(d.toISOString().slice(0,10)); }}>+ سنة</button>
-          </div>
-
-          <button style={S.btn} disabled={loading} onClick={async () => {
-            setLoading(true);
-            try {
-              await api(`/admin/saloons/${saloon.id}/trial`, "PATCH", { trial_starts_at: trialStart, trial_ends_at: trialEnd }, token);
-              onMsg("✓ تم حفظ الاشتراك");
-            } catch(e) { onMsg("❌ " + e.message); }
-            finally { setLoading(false); }
-          }}>{loading ? "جارٍ الحفظ..." : "حفظ الاشتراك ✓"}</button>
         </div>
       )}
     </div>
@@ -811,7 +758,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
       <div style={{ ...S.card, textAlign: "center", padding: "40px" }}>
         <div style={{ fontSize: "40px", marginBottom: "12px" }}>⏳</div>
         <div style={{ fontWeight: "800", fontSize: "18px" }}>الحساب قيد المراجعة</div>
-        <div style={{ color: "#888", fontSize: "13px", marginTop: "8px" }}>سيتواصل معك المدير لتفعيل صالونك</div>
+        <div style={{ color: "#888", fontSize: "13px", marginTop: "8px" }}>سيتواصل معك المدير لتفعيل نشاطك</div>
       </div>
     </div>
   );
@@ -830,7 +777,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
 
       {saloon?.status === "active" && (
         <div style={{ ...S.card, background: "rgba(247,151,30,0.06)", border: "1px solid rgba(247,151,30,0.2)" }}>
-          <div style={S.sectionTitle}>رابط الحجز الخاص بك</div>
+          <div style={S.sectionTitle}>رابط الحجز الخاص بنشاطك</div>
           <div style={{ fontSize: "13px", color: "#ffd200", wordBreak: "break-all", marginBottom: "10px", lineHeight: "1.6" }}>
             {window.location.origin}/book/{saloon.slug}
           </div>
