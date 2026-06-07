@@ -988,21 +988,31 @@ function OwnerDashboard({ token, user, initSaloon }) {
         <div style={S.card}>
           <div style={S.sectionTitle}>المواعيد ({bookings.length})</div>
           {loading && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>جارٍ التحميل...</div>}
-          {!loading && bookings.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد مواعيد بعد</div>}
+          {!loading && bookings.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد مواعيد اليوم</div>}
           {bookings.map(b => (
-            <div key={b.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "14px", marginBottom: "14px" }}>
+            <div key={b.id} style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: "14px", marginBottom: "14px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
-                  <div style={{ fontSize: "15px", fontWeight: "800" }}>{b.name}</div>
-                  <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>{b.service} — {b.day}</div>
+                  <div style={{ fontSize: "15px", fontWeight: "800", color: "#fff" }}>{b.name}</div>
+                  <div style={{ fontSize: "12px", color: "#555", marginTop: "2px" }}>{b.service} — {b.day}</div>
                 </div>
                 <span style={badge("green")}>{b.time}</span>
               </div>
-              <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+              <div style={{ display: "flex", gap: "8px", marginTop: "10px", flexWrap: "wrap" }}>
                 <a href={`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}?text=${encodeURIComponent("أهلاً " + b.name + " 👋\nنذكّرك بموعدك:\n📋 " + b.service + "\n📅 " + b.day + " — " + b.time + "\nنتطلع لاستقبالك 🙏")}`} target="_blank" rel="noreferrer"
                   style={{ ...S.btnSuccess, textDecoration: "none" }}>💬 واتساب</a>
                 <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
                   style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "7px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "700" }}>📞 اتصال</a>
+                <button style={{ ...S.btnDanger, fontSize: "12px" }} onClick={async () => {
+                  if (!window.confirm("هل تريد إلغاء هذا الموعد؟")) return;
+                  try {
+                    await api(`/owner/bookings/${b.id}/cancel`, "PATCH", { reason: "اعتذار من صاحب النشاط" }, token);
+                    // فتح واتساب برسالة اعتذار
+                    const cancelMsg = encodeURIComponent("عزيزي " + b.name + " 🙏\nنعتذر منك بشدة، اضطررنا لإلغاء موعدك:\n📋 " + b.service + "\n📅 " + b.day + " — " + b.time + "\nنأسف للإزعاج وسنكون سعداء بخدمتك في وقت آخر 💛");
+                    window.open(`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}?text=${cancelMsg}`, "_blank");
+                    loadData();
+                  } catch (e) { alert("حدث خطأ: " + e.message); }
+                }}>✕ إلغاء</button>
               </div>
             </div>
           ))}
@@ -1346,10 +1356,28 @@ function BookingPage({ slug }) {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px" }}>
                   {(saloon?.timeSlots || saloon?.time_slots)?.map(t => {
                     const booked = bookedSlots.includes(t);
+
+                    // إخفاء الأوقات الماضية إذا كان اليوم هو اليوم الحالي
+                    const isToday = selected.day === new Date().toLocaleDateString("ar-AE-u-nu-latn", { weekday: "long" }) ||
+                      ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"][new Date().getDay()] === selected.day;
+
+                    if (isToday) {
+                      const now = new Date();
+                      const nowMins = now.getHours() * 60 + now.getMinutes();
+                      const isPM = t.includes("م");
+                      const isAM = t.includes("ص");
+                      const cleaned = t.replace("ص","").replace("م","").trim();
+                      let [h, m] = cleaned.split(":").map(Number);
+                      if (isPM && h !== 12) h += 12;
+                      if (isAM && h === 12) h = 0;
+                      const slotMins = h * 60 + (m || 0);
+                      if (slotMins <= nowMins) return null; // إخفاء الوقت الماضي
+                    }
+
                     const active = selected.time === t;
                     return (
                       <button key={t} disabled={booked} onClick={() => { setSelected(p => ({ ...p, time: t })); setStep(Math.max(step, 4)); }}
-                        style={{ padding: "10px", borderRadius: "9px", fontFamily: "inherit", fontSize: "12px", fontWeight: "600", textAlign: "center", cursor: booked ? "not-allowed" : "pointer", border: booked ? "1px solid rgba(255,255,255,0.04)" : active ? "1px solid #f7971e" : "1px solid rgba(255,255,255,0.08)", background: booked ? "rgba(255,255,255,0.02)" : active ? "rgba(201,168,76,0.2)" : "#141414", color: booked ? "#333" : active ? "#c9a84c" : "#aaa", textDecoration: booked ? "line-through" : "none" }}>{t}</button>
+                        style={{ padding: "10px", borderRadius: "9px", fontFamily: "inherit", fontSize: "12px", fontWeight: "600", textAlign: "center", cursor: booked ? "not-allowed" : "pointer", border: booked ? "1px solid rgba(255,255,255,0.04)" : active ? "1px solid #c9a84c" : "1px solid rgba(255,255,255,0.08)", background: booked ? "rgba(255,255,255,0.02)" : active ? "rgba(201,168,76,0.2)" : "#141414", color: booked ? "#333" : active ? "#c9a84c" : "#aaa", textDecoration: booked ? "line-through" : "none" }}>{t}</button>
                     );
                   })}
                 </div>
