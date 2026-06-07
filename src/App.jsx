@@ -791,6 +791,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
         <button style={tabStyle(tab === "bookings")} onClick={() => setTab("bookings")}>المواعيد</button>
         <button style={tabStyle(tab === "services")} onClick={() => setTab("services")}>الخدمات</button>
         <button style={tabStyle(tab === "times")} onClick={() => setTab("times")}>الأوقات</button>
+        <button style={tabStyle(tab === "report")} onClick={() => setTab("report")}>📊 تقرير</button>
       </div>
 
       {msg && <div style={S.success}>{msg}</div>}
@@ -825,6 +826,93 @@ function OwnerDashboard({ token, user, initSaloon }) {
       )}
       {tab === "times" && saloon && (
         <TimesEditor saloon={saloon} token={token} onSave={s => { setSaloon(s); setMsg("✓ تم حفظ الأوقات"); setTimeout(() => setMsg(""), 2500); }} />
+      )}
+      {tab === "report" && <FinancialReport token={token} />}
+    </div>
+  );
+}
+
+function FinancialReport({ token }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const [from, setFrom] = useState(today);
+  const [to, setTo] = useState(today);
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const data = await api(`/owner/report?from=${from}&to=${to}`, "GET", null, token);
+      setReport(data);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
+
+  const quickRange = (days) => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - days + 1);
+    setFrom(start.toISOString().slice(0, 10));
+    setTo(end.toISOString().slice(0, 10));
+  };
+
+  return (
+    <div style={S.card}>
+      <div style={S.sectionTitle}>📊 التقرير المالي</div>
+
+      {/* أزرار سريعة */}
+      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(1); }}>اليوم</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(7); }}>آخر 7 أيام</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(30); }}>آخر 30 يوم</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(90); }}>آخر 3 أشهر</button>
+      </div>
+
+      {/* اختيار التواريخ */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "10px" }}>
+        <div>
+          <div style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>من</div>
+          <input type="date" style={S.input} value={from} onChange={e => setFrom(e.target.value)} />
+        </div>
+        <div>
+          <div style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>إلى</div>
+          <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
+        </div>
+      </div>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? "جارٍ التحميل..." : "عرض التقرير ←"}</button>
+
+      {report && (
+        <div style={{ marginTop: "16px" }}>
+          {/* ملخص */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "14px" }}>
+            <div style={{ ...S.statCard }}>
+              <div style={{ ...S.statNum, fontSize: "22px" }}>{report.totalBookings}</div>
+              <div style={S.statLabel}>إجمالي الحجوزات</div>
+            </div>
+            <div style={{ ...S.statCard }}>
+              <div style={{ ...S.statNum, fontSize: "22px", color: "#25d166" }}>{(report.totalAmount || 0).toLocaleString()}</div>
+              <div style={S.statLabel}>إجمالي المبالغ (د.إ)</div>
+            </div>
+          </div>
+
+          {/* التفاصيل */}
+          <div style={S.sectionTitle}>تفاصيل الحجوزات</div>
+          {report.bookings?.length === 0 && (
+            <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد حجوزات في هذه الفترة</div>
+          )}
+          {report.bookings?.map(b => (
+            <div key={b.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "10px", marginBottom: "10px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontSize: "13px", fontWeight: "700" }}>{b.name}</div>
+                  <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{b.service} — {b.day} {b.time}</div>
+                  <div style={{ fontSize: "10px", color: "#555", marginTop: "2px" }}>{new Date(b.created_at).toLocaleDateString("ar-AE")}</div>
+                </div>
+                <div style={{ fontSize: "14px", fontWeight: "800", color: "#ffd200" }}>{b.price || 0} د.إ</div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
