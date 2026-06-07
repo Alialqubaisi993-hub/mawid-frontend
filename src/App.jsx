@@ -478,6 +478,7 @@ function AdminDashboard({ token }) {
       {/* تابات */}
       <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
         <button style={tabStyle(adminTab === "saloons")} onClick={() => setAdminTab("saloons")}>الأنشطة</button>
+        <button style={tabStyle(adminTab === "bookings")} onClick={() => setAdminTab("bookings")}>الحجوزات</button>
         <button style={tabStyle(adminTab === "users")} onClick={() => setAdminTab("users")}>المستخدمين</button>
       </div>
 
@@ -516,11 +517,168 @@ function AdminDashboard({ token }) {
         )
       )}
 
+      {adminTab === "bookings" && <AdminBookings token={token} saloons={saloons} />}
       {adminTab === "users" && <UsersManager token={token} onMsg={showMsg} />}
     </div>
   );
 }
 
+
+
+function AdminBookings({ token, saloons }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const [from, setFrom] = useState(today);
+  const [to, setTo] = useState(today);
+  const [saloonId, setSaloonId] = useState("");
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      let url = `/admin/bookings?from=${from}&to=${to}`;
+      if (saloonId) url += `&saloon_id=${saloonId}`;
+      const res = await api(url, "GET", null, token);
+      setData(res);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
+
+  const quickRange = (days) => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - days + 1);
+    setFrom(start.toISOString().slice(0, 10));
+    setTo(end.toISOString().slice(0, 10));
+  };
+
+  return (
+    <div style={S.card}>
+      <div style={S.sectionTitle}>📋 كل الحجوزات</div>
+
+      {/* فلتر النشاط */}
+      <select style={{ ...S.input, marginBottom: "10px" }} value={saloonId} onChange={e => setSaloonId(e.target.value)}>
+        <option value="">كل الأنشطة</option>
+        {saloons?.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+      </select>
+
+      {/* أزرار سريعة */}
+      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "10px" }}>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(1)}>اليوم</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(7)}>7 أيام</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(30)}>30 يوم</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(90)}>3 أشهر</button>
+      </div>
+
+      {/* تواريخ */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "10px" }}>
+        <div>
+          <div style={{ fontSize: "11px", color: "#555", marginBottom: "4px" }}>من</div>
+          <input type="date" style={S.input} value={from} onChange={e => setFrom(e.target.value)} />
+        </div>
+        <div>
+          <div style={{ fontSize: "11px", color: "#555", marginBottom: "4px" }}>إلى</div>
+          <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
+        </div>
+      </div>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? "جارٍ التحميل..." : "عرض الحجوزات ←"}</button>
+
+      {data && (
+        <div style={{ marginTop: "16px" }}>
+          {/* ملخص */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "14px" }}>
+            <div style={S.statCard}>
+              <div style={{ ...S.statNum, fontSize: "22px" }}>{data.totalBookings}</div>
+              <div style={S.statLabel}>إجمالي الحجوزات</div>
+            </div>
+            <div style={S.statCard}>
+              <div style={{ ...S.statNum, fontSize: "22px", color: "#25d166" }}>{(data.totalAmount || 0).toLocaleString()}</div>
+              <div style={S.statLabel}>إجمالي المبالغ (د.إ)</div>
+            </div>
+          </div>
+
+          {/* زر PDF */}
+          <button style={{ ...S.btnGhost, width: "100%", marginBottom: "14px", color: "#c9a84c", borderColor: "rgba(201,168,76,0.3)" }} onClick={() => {
+            const saloonName = saloonId ? saloons?.find(s => s.id === saloonId)?.name || "كل الأنشطة" : "كل الأنشطة";
+            const rows = (data.bookings || []).map(b =>
+              `<tr>
+                <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.name}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.phone}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.saloon_name}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.service}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.day} ${b.time}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #eee;">${new Date(b.created_at).toLocaleDateString("ar-AE")}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #eee; font-weight:bold; color:#c9a84c;">${b.price || 0} د.إ</td>
+              </tr>`
+            ).join("");
+            const html = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>تقرير المدير — مَوعِد</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family:'Cairo',sans-serif; direction:rtl; padding:40px; color:#1a1a1a; }
+  h1 { font-size:26px; font-weight:900; color:#c9a84c; letter-spacing:3px; margin:0 0 4px; }
+  .sub { font-size:12px; color:#888; margin-bottom:6px; }
+  .period { font-size:13px; color:#555; margin-bottom:24px; }
+  .summary { display:flex; gap:16px; margin-bottom:28px; }
+  .sc { background:#f8f8f8; border-radius:10px; padding:16px 24px; flex:1; text-align:center; border:1px solid #eee; }
+  .sn { font-size:26px; font-weight:900; color:#c9a84c; }
+  .sn.green { color:#25d166; }
+  .sl { font-size:11px; color:#888; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  thead { background:#1a1a1a; color:#c9a84c; }
+  thead th { padding:10px; text-align:right; font-weight:700; }
+  .footer { margin-top:28px; text-align:center; font-size:11px; color:#aaa; }
+</style>
+</head>
+<body>
+<h1>MAWIDS — تقرير المدير</h1>
+<div class="sub">Mawids.com — منصة إدارة الحجوزات</div>
+<div class="period">النشاط: ${saloonName} | الفترة: من ${from} إلى ${to}</div>
+<div class="summary">
+  <div class="sc"><div class="sn">${data.totalBookings}</div><div class="sl">إجمالي الحجوزات</div></div>
+  <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">إجمالي المبالغ</div></div>
+</div>
+<table>
+  <thead><tr><th>الزبون</th><th>الجوال</th><th>النشاط</th><th>الخدمة</th><th>الموعد</th><th>التاريخ</th><th>المبلغ</th></tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+<div class="footer">تم إنشاؤه بواسطة مَوعِد — ${new Date().toLocaleDateString("ar-AE")}</div>
+</body></html>`;
+            const win = window.open("", "_blank");
+            win.document.write(html);
+            win.document.close();
+            setTimeout(() => win.print(), 800);
+          }}>📄 تحميل التقرير PDF</button>
+
+          <div style={S.sectionTitle}>تفاصيل الحجوزات</div>
+          {data.bookings?.length === 0 && (
+            <div style={{ color: "#555", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد حجوزات في هذه الفترة</div>
+          )}
+          {data.bookings?.map(b => (
+            <div key={b.id} style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: "12px", marginBottom: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "4px" }}>
+                <div style={{ fontSize: "14px", fontWeight: "700", color: "#fff" }}>{b.name}</div>
+                <div style={{ fontSize: "14px", fontWeight: "800", color: "#c9a84c" }}>{b.price || 0} د.إ</div>
+              </div>
+              <div style={{ fontSize: "11px", color: "#555", marginBottom: "4px" }}>{b.saloon_name} — {b.service}</div>
+              <div style={{ fontSize: "11px", color: "#555", marginBottom: "6px" }}>{b.day} — {b.time} — {new Date(b.created_at).toLocaleDateString("ar-AE")}</div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <a href={`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}?text=${encodeURIComponent("أهلاً " + b.name + " 👋\nنذكّرك بموعدك:\n📋 " + b.service + "\n📅 " + b.day + " — " + b.time + "\nنتطلع لاستقبالك 🙏")}`}
+                  target="_blank" rel="noreferrer"
+                  style={{ ...S.btnSuccess, textDecoration: "none", fontSize: "11px" }}>💬 {b.phone}</a>
+                <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
+                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "5px 12px", borderRadius: "8px", textDecoration: "none", fontSize: "11px", fontWeight: "700" }}>📞 اتصال</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function UsersManager({ token, onMsg }) {
   const [users, setUsers] = useState([]);
@@ -980,14 +1138,21 @@ function FinancialReport({ token }) {
             <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد حجوزات في هذه الفترة</div>
           )}
           {report.bookings?.map(b => (
-            <div key={b.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "10px", marginBottom: "10px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div key={b.id} style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: "12px", marginBottom: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
                 <div>
-                  <div style={{ fontSize: "13px", fontWeight: "700" }}>{b.name}</div>
-                  <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{b.service} — {b.day} {b.time}</div>
-                  <div style={{ fontSize: "10px", color: "#555", marginTop: "2px" }}>{new Date(b.created_at).toLocaleDateString("ar-AE")}</div>
+                  <div style={{ fontSize: "13px", fontWeight: "700", color: "#fff" }}>{b.name}</div>
+                  <div style={{ fontSize: "11px", color: "#555", marginTop: "2px" }}>{b.service} — {b.day} {b.time}</div>
+                  <div style={{ fontSize: "10px", color: "#444", marginTop: "2px" }}>{new Date(b.created_at).toLocaleDateString("ar-AE")}</div>
                 </div>
                 <div style={{ fontSize: "14px", fontWeight: "800", color: "#c9a84c" }}>{b.price || 0} د.إ</div>
+              </div>
+              <div style={{ display: "flex", gap: "6px" }}>
+                <a href={`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}?text=${encodeURIComponent("أهلاً " + b.name + " 👋\nنذكّرك بموعدك:\n📋 " + b.service + "\n📅 " + b.day + " — " + b.time + "\nنتطلع لاستقبالك 🙏")}`}
+                  target="_blank" rel="noreferrer"
+                  style={{ ...S.btnSuccess, textDecoration: "none", fontSize: "11px" }}>💬 {b.phone}</a>
+                <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
+                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "5px 12px", borderRadius: "8px", textDecoration: "none", fontSize: "11px", fontWeight: "700" }}>📞 اتصال</a>
               </div>
             </div>
           ))}
