@@ -1283,7 +1283,7 @@ function ServicesEditor({ saloon, token, onSave }) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(null);
 
-  const add = () => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "", description: "", image: "" }]);
+  const add = () => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "", price: "", description: "", image: "" }]);
   const remove = id => setServices(p => p.filter(s => s.id !== id));
   const update = (id, field, val) => setServices(p => p.map(s => s.id === id ? { ...s, [field]: val } : s));
 
@@ -1308,7 +1308,7 @@ function ServicesEditor({ saloon, token, onSave }) {
     catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
-  const LOGO_PLACEHOLDER = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='200' height='120' viewBox='0 0 200 120'><rect width='200' height='120' fill='%23141414'/><text x='100' y='50' text-anchor='middle' font-family='Arial' font-size='14' fill='%23c9a84c' font-weight='bold' letter-spacing='3'>MAWIDS</text><text x='100' y='72' text-anchor='middle' font-family='Arial' font-size='11' fill='%23555'>مَوعِد</text><rect x='70' y='82' width='60' height='1.5' fill='%23c9a84c'/></svg>`);
+  const LOGO_PLACEHOLDER = null;
 
   return (
     <div style={S.card}>
@@ -1382,7 +1382,7 @@ function BookingPage({ slug }) {
   const { lang, dir } = useLang();
   const [saloon, setSaloon] = useState(null);
   const [step, setStep] = useState(1);
-  const [selected, setSelected] = useState({ service: null, day: null, time: null });
+  const [selected, setSelected] = useState({ services: [], day: null, time: null });
   const [bookedSlots, setBookedSlots] = useState([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -1405,7 +1405,7 @@ function BookingPage({ slug }) {
     if (phone.replace(/\s+/g, "").length < 9) return setError(T(lang,"أدخل رقم الجوال كاملاً","Enter full phone number"));
     setError("");
     try {
-      await api(`/book/${slug}`, "POST", { name, phone, service: selected.service, day: selected.day, time: selected.time });
+      await api(`/book/${slug}`, "POST", { name, phone, service: selected.services.join(" + "), day: selected.day, time: selected.time });
       setDone(true);
     } catch (e) { setError(e.message); }
   };
@@ -1433,7 +1433,7 @@ function BookingPage({ slug }) {
             <div style={{ width: "70px", height: "70px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px", margin: "0 auto 20px" }}>✓</div>
             <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "10px" }}>{T(lang,"تم الحجز بنجاح! 🎉","Booking Confirmed! 🎉")}</div>
             <div style={{ fontSize: "13px", color: "#888", lineHeight: "2" }}>
-              <div><span style={{ color: "#fff" }}>{selected.service}</span></div>
+              <div><span style={{ color: "#fff" }}>{selected.services.join(" + ")}</span></div>
               <div><span style={{ color: "#fff" }}>{selected.day} — {selected.time}</span></div>
               <div style={{ marginTop: "8px" }}>{T(lang,"سيتواصل معك صاحب النشاط للتأكيد","The business will contact you")}</div>
             </div>
@@ -1443,14 +1443,30 @@ function BookingPage({ slug }) {
             <div style={S.card}>
               <div style={S.sectionTitle}>{T(lang,"اختر الخدمة","Choose Service")}</div>
               {saloon?.services?.map(sv => {
-                const LOGO = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'><rect width='200' height='100' fill='%23141414'/><text x='100' y='42' text-anchor='middle' font-family='Arial' font-size='13' fill='%23c9a84c' font-weight='bold' letter-spacing='3'>MAWIDS</text><text x='100' y='62' text-anchor='middle' font-family='Arial' font-size='10' fill='%23555'>مَوعِد</text><rect x='75' y='70' width='50' height='1.5' fill='%23c9a84c'/></svg>`);
-                const isSelected = selected.service === sv.name;
+
+                const isSelected = selected.services.includes(sv.name);
                 return (
-                  <div key={sv.id} onClick={() => { setSelected(p => ({ ...p, service: sv.name })); setStep(Math.max(step, 2)); }}
+                  <div key={sv.id} onClick={() => {
+                    setSelected(p => {
+                      const newServices = p.services.includes(sv.name)
+                        ? p.services.filter(s => s !== sv.name)
+                        : [...p.services, sv.name];
+                      return { ...p, services: newServices };
+                    });
+                    setStep(Math.max(step, 2));
+                  }}
                     style={{ borderRadius: "14px", cursor: "pointer", marginBottom: "10px", overflow: "hidden", border: isSelected ? "1.5px solid #c9a84c" : "1px solid rgba(255,255,255,0.07)", background: isSelected ? "rgba(201,168,76,0.05)" : "#141414" }}>
                     {/* صورة الخدمة */}
                     <div style={{ height: "110px", overflow: "hidden", position: "relative" }}>
-                      <img src={sv.image || LOGO} alt={sv.name} style={{ width: "100%", height: "100%", objectFit: sv.image ? "cover" : "contain", padding: sv.image ? "0" : "8px" }} />
+                      {sv.image ? (
+                        <img src={sv.image} alt={sv.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", background: "#0c0c0c", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+                          <div style={{ fontSize: "13px", fontWeight: "900", color: "#c9a84c", letterSpacing: "3px" }}>MAWIDS</div>
+                          <div style={{ fontSize: "10px", color: "#555", marginTop: "4px" }}>مَوعِد</div>
+                          <div style={{ width: "40px", height: "1px", background: "#c9a84c", marginTop: "6px" }}></div>
+                        </div>
+                      )}
                       <div style={{ position: "absolute", bottom: "8px", left: "8px", background: "rgba(0,0,0,0.75)", color: "#c9a84c", fontSize: "13px", fontWeight: "800", padding: "4px 12px", borderRadius: "8px" }}>{sv.price} {T(lang,"د.إ","AED")}</div>
                       <div style={{ position: "absolute", bottom: "8px", right: "8px", background: "rgba(0,0,0,0.75)", color: "#888", fontSize: "11px", padding: "4px 10px", borderRadius: "8px" }}>{sv.duration}</div>
                       {isSelected && <div style={{ position: "absolute", top: "8px", left: "8px", background: "#c9a84c", color: "#0c0c0c", fontSize: "10px", fontWeight: "800", padding: "3px 10px", borderRadius: "20px" }}>✓ {T(lang,"مختار","Selected")}</div>}
@@ -1465,7 +1481,7 @@ function BookingPage({ slug }) {
               })}
             </div>
 
-            {step >= 2 && (
+            {step >= 2 && selected.services.length > 0 && (
               <div style={S.card}>
                 <div style={S.sectionTitle}>{T(lang,"اختر اليوم","Choose Day")}</div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
@@ -1518,7 +1534,7 @@ function BookingPage({ slug }) {
                 <input style={S.input} placeholder={T(lang,"اسمك الكريم","Your name")} value={name} onChange={e => setName(e.target.value)} />
                 <input style={S.input} placeholder={T(lang,"رقم الجوال","Phone number")} value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
                 <div style={{ padding: "12px", background: "rgba(201,168,76,0.06)", borderRadius: "10px", marginBottom: "12px", fontSize: "13px", lineHeight: "2", color: "#ccc" }}>
-                  <div>📋 <strong style={{ color: "#fff" }}>{selected.service}</strong></div>
+                  <div>📋 <strong style={{ color: "#fff" }}>{selected.services.join(" + ")}</strong></div>
                   <div>📅 <strong style={{ color: "#fff" }}>{selected.day}</strong></div>
                   <div>🕐 <strong style={{ color: "#fff" }}>{selected.time}</strong></div>
                 </div>
