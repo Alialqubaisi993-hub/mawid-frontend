@@ -349,7 +349,7 @@ function LoginPage({ onAuth, onRegister }) {
         {error && <div style={S.error}>{error}</div>}
         <div style={S.sectionTitle}>{T(lang,"بيانات الدخول","Login Credentials")}</div>
         <input style={S.input} type="email" {...{placeholder: t.email}} value={email} onChange={e => setEmail(e.target.value)} />
-        <input style={S.input} type="password" {...{placeholder: t.password}} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && login()} />
+        <input style={S.input} type="password" placeholder={T(lang,"كلمة المرور","Password")} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && login()} />
         <button style={S.btn} onClick={login} disabled={loading}>{loading ? T(lang,"جارٍ الدخول...","Logging in...") : T(lang,"دخول ←","Login →")}</button>
         <div style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#888" }}>
           ما عندك حساب؟{" "}
@@ -379,7 +379,7 @@ function RegisterPage({ onBack }) {
 
   const submit = async () => {
     if (!form.name || !form.email || !form.password || !form.activityName || !form.phone) return setError(t.allRequired);
-    if (!agreed) return setError(t.agreeTerms);
+    if (!agreed) return setError(T(lang,"يجب الموافقة على الشروط","Please agree to terms"));
     setLoading(true); setError("");
     try { await api("/auth/register", "POST", form); setDone(true); }
     catch (e) { setError(e.message); }
@@ -437,9 +437,9 @@ function RegisterPage({ onBack }) {
         <div style={S.sectionTitle}>{T(lang,"بيانات الحساب","Account Information")}</div>
         <input style={S.input} {...{placeholder: t.fullName}} value={form.name} onChange={f("name")} />
         <input style={S.input} type="email" {...{placeholder: t.email}} value={form.email} onChange={f("email")} />
-        <input style={S.input} type="password" {...{placeholder: t.password}} value={form.password} onChange={f("password")} />
+        <input style={S.input} type="password" placeholder={T(lang,"كلمة المرور","Password")} value={form.password} onChange={f("password")} />
         <div style={{ ...S.sectionTitle, marginTop: "8px" }}>{T(lang,"بيانات النشاط","Business Information")}</div>
-        <input style={S.input} {...{placeholder: t.activityName}} value={form.activityName} onChange={f("activityName")} />
+        <input style={S.input} placeholder={T(lang,"اسم النشاط","Business name")} value={form.activityName} onChange={f("activityName")} />
         <input style={S.input} {...{placeholder: t.phone}} value={form.phone} onChange={f("phone")} type="tel" />
         <input style={S.input} {...{placeholder: t.city}} value={form.city} onChange={f("city")} />
 
@@ -458,7 +458,7 @@ function RegisterPage({ onBack }) {
         </div>
 
         <button style={{ ...S.btn, opacity: agreed ? 1 : 0.5 }} onClick={submit} disabled={loading || !agreed}>
-          {loading ? t.sending : t.sendRequest}
+          {loading ? T(lang,"جارٍ الإرسال...","Sending...") : T(lang,"إرسال الطلب ✓","Submit Request ✓")}
         </button>
         <div style={{ textAlign: "center", marginTop: "14px", fontSize: "13px" }}>
           <span style={{ color: "#888", cursor: "pointer" }} onClick={onBack}>← رجوع للدخول</span>
@@ -666,7 +666,7 @@ function AdminBookings({ token, saloons }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : t.showReport}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? T(lang,"جارٍ التحميل...","Loading...") : T(lang,"عرض ←","Show →")}</button>
 
       {data && (
         <div style={{ marginTop: "16px" }}>
@@ -824,7 +824,7 @@ function UsersManager({ token, onMsg }) {
           <div style={{ fontSize: "12px", color: "#c9a84c", fontWeight: "700", marginBottom: "10px" }}>مستخدم جديد</div>
           <input style={S.input} placeholder="الاسم" value={form.name} onChange={f("name")} />
           <input style={S.input} {...{placeholder: t.email}} type="email" value={form.email} onChange={f("email")} />
-          <input style={S.input} {...{placeholder: t.password}} type="password" value={form.password} onChange={f("password")} />
+          <input style={S.input} placeholder={T(lang,"كلمة المرور","Password")} type="password" value={form.password} onChange={f("password")} />
           <select style={{ ...S.input, marginBottom: "10px" }} value={form.role} onChange={f("role")}>
             <option value="owner">صاحب نشاط</option>
             <option value="admin">مدير</option>
@@ -1048,7 +1048,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
         <div style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "12px", padding: "12px 14px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px" }}>
           <div style={{ fontSize: "11px", color: "#c9a84c", wordBreak: "break-all", flex: 1 }}>🔗 {window.location.origin}/book/{saloon.slug}</div>
           <button style={{ ...S.btn, padding: "8px 14px", fontSize: "11px", whiteSpace: "nowrap", width: "auto" }} onClick={copyLink}>
-            {copied ? t.copied : t.copyLink}
+            {copied ? T(lang,"✓ نُسخ","✓ Copied") : T(lang,"📋 نسخ","📋 Copy")}
           </button>
         </div>
       )}
@@ -1081,7 +1081,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
                 <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
                   style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "7px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "700" }}>{T(lang,"📞 اتصال","📞 Call")}</a>
                 <button style={{ ...S.btnDanger, fontSize: "12px" }} onClick={async () => {
-                  if (!window.confirm(t.confirmCancel)) return;
+                  if (!window.confirm(T(lang,"هل تريد إلغاء هذا الموعد؟","Cancel this appointment?"))) return;
                   try {
                     await api(`/owner/bookings/${b.id}/cancel`, "PATCH", { reason: "اعتذار من صاحب النشاط" }, token);
                     // فتح واتساب برسالة اعتذار
@@ -1226,7 +1226,7 @@ function FinancialReport({ token }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : t.showReport}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? T(lang,"جارٍ التحميل...","Loading...") : T(lang,"عرض ←","Show →")}</button>
 
       {report && (
         <div style={{ marginTop: "16px" }}>
@@ -1366,7 +1366,7 @@ function BookingPage({ slug }) {
   }, [selected.day, saloon, slug]);
 
   const confirm = async () => {
-    if (!name || !phone) return setError(t.enterDetails);
+    if (!name || !phone) return setError(T(lang,"أدخل اسمك ورقم جوالك","Enter your name and phone"));
     if (phone.replace(/\s+/g, "").length < 9) return setError(t.phoneRequired);
     setError("");
     try {
