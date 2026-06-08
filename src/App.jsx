@@ -390,14 +390,14 @@ function RegisterPage({ onBack }) {
         <button style={S.btnGhost} onClick={() => setShowTerms(false)}>← رجوع</button>
       </div>
       <div style={S.card}>
-        <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", marginBottom: "16px", textAlign: "center" }}>شروط الاستخدام والعقد</div>
+        <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", marginBottom: "16px", textAlign: "center" }}>{t.termsTitle}</div>
 
         {[
-          { title: "📋 تعريف المنصة", body: "مَوعِد وسيط تقني فقط — توفر الأدوات وتسهّل الخدمة. لا تقدم مَوعِد أي خدمة مباشرة للزبائن. العلاقة التجارية تكون حصراً بين صاحب النشاط وزبونه." },
-          { title: "💰 السياسة المالية", body: "✅ مَوعِد لا تأخذ أي رسوم من الزبائن أبداً وتحت أي ظرف.\n✅ الرسوم تكون حصراً من أصحاب الأنشطة المشتركين.\n✅ أي مبلغ يدفعه الزبون هو لصاحب النشاط مباشرة وليس لمَوعِد.\n⚠️ تتبرأ مَوعِد تماماً من أي نزاع مالي بين صاحب النشاط وزبونه." },
-          { title: "🎁 الفترة التجريبية", body: "التسجيل مجاني تماماً في هذه المرحلة. في حال تغيير السياسة مستقبلاً، سيتم إشعار جميع المشتركين مسبقاً بمدة لا تقل عن 30 يوماً. يحق للمشترك إلغاء حسابه في أي وقت دون أي التزامات." },
-          { title: "✅ مسؤوليات صاحب النشاط", body: "• تقديم معلومات صحيحة عند التسجيل\n• الالتزام بتقديم الخدمات المعلنة\n• التواصل المباشر مع الزبائن وحل أي نزاعات بشكل مستقل\n• المحافظة على سرية بيانات الزبائن" },
-          { title: "⚖️ إخلاء المسؤولية", body: "⚠️ مَوعِد غير مسؤولة عن جودة الخدمات المقدمة من أصحاب الأنشطة.\n⚠️ مَوعِد غير مسؤولة عن أي نزاع بين صاحب النشاط وزبونه.\n⚠️ مَوعِد غير مسؤولة عن أي خسائر ناتجة عن إساءة استخدام المنصة." },
+          { title: t.term1Title, body: t.term1Body },
+          { title: t.term2Title, body: t.term2Body },
+          { title: t.term3Title, body: t.term3Body },
+          { title: t.term4Title, body: t.term4Body },
+          { title: t.term5Title, body: t.term5Body },
         ].map((s, i) => (
           <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(201,168,76,0.1)", borderRadius: "12px", padding: "14px", marginBottom: "10px" }}>
             <div style={{ fontSize: "12px", fontWeight: "800", color: "#c9a84c", marginBottom: "8px" }}>{s.title}</div>
@@ -663,7 +663,7 @@ function AdminBookings({ token, saloons }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : "عرض الحجوزات ←"}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : t.showReport}</button>
 
       {data && (
         <div style={{ marginTop: "16px" }}>
