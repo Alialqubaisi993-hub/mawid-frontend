@@ -608,6 +608,7 @@ function AdminDashboard({ token }) {
 
 
 function AdminBookings({ token, saloons }) {
+  const { t } = useLang();
   const today = new Date().toISOString().slice(0, 10);
   const [from, setFrom] = useState(today);
   const [to, setTo] = useState(today);
@@ -763,6 +764,7 @@ function AdminBookings({ token, saloons }) {
 }
 
 function UsersManager({ token, onMsg }) {
+  const { t } = useLang();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -862,6 +864,7 @@ function UsersManager({ token, onMsg }) {
 }
 
 function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
+  const { t } = useLang();
   const [tab, setTab] = useState("services");
   const [services, setServices] = useState(saloon.services || []);
   const [days, setDays] = useState(saloon.work_days || []);
@@ -1103,6 +1106,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
 }
 
 function FinancialReport({ token }) {
+  const { t } = useLang();
   const today = new Date().toISOString().slice(0, 10);
   const [from, setFrom] = useState(today);
   const [to, setTo] = useState(today);
@@ -1272,6 +1276,7 @@ function FinancialReport({ token }) {
 }
 
 function ServicesEditor({ saloon, token, onSave }) {
+  const { t } = useLang();
   const [services, setServices] = useState(saloon.services || []);
   const [loading, setLoading] = useState(false);
   const add = () => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "" }]);
@@ -1303,6 +1308,7 @@ function ServicesEditor({ saloon, token, onSave }) {
 }
 
 function TimesEditor({ saloon, token, onSave }) {
+  const { t } = useLang();
   const ALL_DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   const DEFAULT_TIMES = ["8:00 ص","8:30 ص","9:00 ص","9:30 ص","10:00 ص","10:30 ص","11:00 ص","11:30 ص","12:00 م","1:00 م","1:30 م","2:00 م","2:30 م","3:00 م","3:30 م","4:00 م","4:30 م","5:00 م","5:30 م","6:00 م"];
   const [days, setDays] = useState(saloon.workDays || saloon.work_days || []);
