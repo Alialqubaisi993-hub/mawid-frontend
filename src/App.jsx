@@ -341,7 +341,7 @@ function LoginPage({ onAuth, onRegister }) {
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "28px", paddingTop: "16px" }}>
         <div style={{ fontSize: "32px", fontWeight: "900", marginBottom: "6px" }}>{t.welcome}</div>
-        <div style={{ fontSize: "13px", color: "#888" }}>سجّل دخولك لإدارة نشاطك</div>
+        <div style={{ fontSize: "13px", color: "#888" }}>{t.welcomeSub}</div>
       </div>
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
@@ -355,7 +355,7 @@ function LoginPage({ onAuth, onRegister }) {
         </div>
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
-        <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>هل تريد تسجيل نشاطك؟ تواصل معنا</div>
+        <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>{t.contactUs}</div>
         <a href="https://wa.me/971508177760?text=أهلاً، أريد تسجيل نشاطي في مَوعِد" target="_blank" rel="noreferrer"
           style={{ display: "inline-block", background: "linear-gradient(135deg,#25d166,#128C7E)", color: "#fff", padding: "10px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", fontWeight: "700" }}>
           💬 تواصل عبر واتساب
@@ -535,25 +535,25 @@ function AdminDashboard({ token }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "6px", marginBottom: "10px" }}>
         <div style={{ background: "#141414", border: "1px solid rgba(201,168,76,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#c9a84c" }}>{stats.total || 0}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>نشاط</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{lang === "ar" ? "نشاط" : "businesses"}</div>
         </div>
         <div style={{ background: "#141414", border: "1px solid rgba(37,209,102,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#25d166" }}>{stats.active || 0}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>نشط</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{lang === "ar" ? "نشط" : "active"}</div>
         </div>
         <div style={{ background: "#141414", border: "1px solid rgba(255,150,50,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#ff9632" }}>{stats.pending || 0}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>معلق</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{lang === "ar" ? "معلق" : "pending"}</div>
         </div>
         <div style={{ background: "#141414", border: "1px solid rgba(100,160,255,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#64a0ff" }}>{stats.totalBookings || 0}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>حجز</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{lang === "ar" ? "حجز" : "bookings"}</div>
         </div>
       </div>
 
       {/* إجمالي المبالغ */}
       <div style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: "12px", padding: "12px 16px", marginBottom: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: "12px", color: "#555" }}>💰 إجمالي المبالغ</span>
+        <span style={{ fontSize: "12px", color: "#555" }}>💰 {lang === "ar" ? "إجمالي المبالغ" : "Total Revenue"}</span>
         <span style={{ fontSize: "18px", fontWeight: "900", color: "#25d166" }}>{(stats.totalAmount || 0).toLocaleString()} <span style={{ fontSize: "11px" }}>د.إ</span></span>
       </div>
 
@@ -584,14 +584,14 @@ function AdminDashboard({ token }) {
                   </span>
                 </div>
                 <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-                  <span style={{ ...badge(""), fontSize: "11px" }}>📋 {s.bookings || 0} حجز</span>
+                  <span style={{ ...badge(""), fontSize: "11px" }}>📋 {s.bookings || 0} {lang === "ar" ? "حجز" : "bookings"}</span>
                   <span style={{ ...badge("green"), fontSize: "11px" }}>💰 {(s.totalAmount || 0).toLocaleString()} د.إ</span>
                 </div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {s.status === "pending" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>✓ تفعيل</button>}
                   {s.status === "active" && <button style={S.btnDanger} onClick={() => setStatus(s.id, "suspended")}>⏸ إيقاف</button>}
                   {s.status === "suspended" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>▶ إعادة تفعيل</button>}
-                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>✏️ تعديل الخدمات والأوقات</button>
+                  <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>{lang === "ar" ? "✏️ تعديل" : "✏️ Edit"}</button>
                 </div>
               </div>
             ))}
@@ -682,7 +682,7 @@ function AdminBookings({ token, saloons }) {
 
           {/* زر PDF */}
           <button style={{ ...S.btnGhost, width: "100%", marginBottom: "14px", color: "#c9a84c", borderColor: "rgba(201,168,76,0.3)" }} onClick={() => {
-            const saloonName = saloonId ? saloons?.find(s => s.id === saloonId)?.name || "كل الأنشطة" : "كل الأنشطة";
+            const saloonName = saloonId ? saloons?.find(s => s.id === saloonId)?.name || lang === "ar" ? "كل الأنشطة" : "All Businesses" : lang === "ar" ? "كل الأنشطة" : "All Businesses";
             const rows = (data.bookings || []).map(b =>
               `<tr>
                 <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.name}</td>
