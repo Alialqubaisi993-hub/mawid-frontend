@@ -1281,30 +1281,65 @@ function ServicesEditor({ saloon, token, onSave }) {
   const { lang } = useLang();
   const [services, setServices] = useState(saloon.services || []);
   const [loading, setLoading] = useState(false);
-  const add = () => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "" }]);
+  const [uploading, setUploading] = useState(null);
+
+  const add = () => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "", description: "", image: "" }]);
   const remove = id => setServices(p => p.filter(s => s.id !== id));
   const update = (id, field, val) => setServices(p => p.map(s => s.id === id ? { ...s, [field]: val } : s));
+
+  const uploadImage = async (id, file) => {
+    if (!file) return;
+    setUploading(id);
+    try {
+      const res = await fetch(`${API}/owner/upload-image`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": file.type },
+        body: file,
+      });
+      const data = await res.json();
+      if (data.url) update(id, "image", data.url);
+    } catch (e) { console.error(e); }
+    finally { setUploading(null); }
+  };
+
   const save = async () => {
     setLoading(true);
     try { const u = await api("/owner/saloon/services", "PUT", { services }, token); onSave(u); }
     catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
+  const LOGO_PLACEHOLDER = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='200' height='120' viewBox='0 0 200 120'><rect width='200' height='120' fill='%23141414'/><text x='100' y='50' text-anchor='middle' font-family='Arial' font-size='14' fill='%23c9a84c' font-weight='bold' letter-spacing='3'>MAWIDS</text><text x='100' y='72' text-anchor='middle' font-family='Arial' font-size='11' fill='%23555'>مَوعِد</text><rect x='70' y='82' width='60' height='1.5' fill='%23c9a84c'/></svg>`);
+
   return (
     <div style={S.card}>
-      <div style={S.sectionTitle}>الخدمات والأسعار</div>
+      <div style={S.sectionTitle}>{T(lang, "الخدمات والأسعار", "Services & Pricing")}</div>
       {services.map(s => (
-        <div key={s.id} style={{ marginBottom: "12px", padding: "12px", background: "#141414", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <input style={{ ...S.input, marginBottom: "6px" }} placeholder="اسم الخدمة" value={s.name} onChange={e => update(s.id, "name", e.target.value)} />
-          <div style={{ display: "flex", gap: "8px" }}>
-            <input style={{ ...S.input, marginBottom: "0", flex: 1 }} placeholder="المدة" value={s.duration} onChange={e => update(s.id, "duration", e.target.value)} />
-            <input style={{ ...S.input, marginBottom: "0", flex: 1 }} placeholder="السعر (د.إ)" value={s.price} onChange={e => update(s.id, "price", e.target.value)} />
-            <button style={{ ...S.btnDanger, alignSelf: "stretch" }} onClick={() => remove(s.id)}>✕</button>
+        <div key={s.id} style={{ marginBottom: "16px", background: "#0c0c0c", borderRadius: "14px", border: "1px solid rgba(201,168,76,0.12)", overflow: "hidden" }}>
+          {/* صورة الخدمة */}
+          <div style={{ position: "relative", height: "120px", background: "#141414", overflow: "hidden" }}>
+            <img src={s.image || LOGO_PLACEHOLDER} alt="" style={{ width: "100%", height: "100%", objectFit: s.image ? "cover" : "contain", padding: s.image ? "0" : "10px" }} />
+            <label style={{ position: "absolute", bottom: "8px", left: "8px", background: "rgba(0,0,0,0.75)", color: "#c9a84c", fontSize: "11px", fontWeight: "700", padding: "5px 12px", borderRadius: "8px", cursor: "pointer", border: "1px solid rgba(201,168,76,0.3)" }}>
+              {uploading === s.id ? T(lang,"جارٍ الرفع...","Uploading...") : T(lang,"📷 رفع صورة","📷 Upload Image")}
+              <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => uploadImage(s.id, e.target.files[0])} />
+            </label>
+            {s.image && (
+              <button style={{ position: "absolute", top: "8px", left: "8px", background: "rgba(255,60,60,0.8)", color: "#fff", border: "none", borderRadius: "6px", padding: "3px 8px", fontSize: "11px", cursor: "pointer" }} onClick={() => update(s.id, "image", "")}>✕</button>
+            )}
+          </div>
+          {/* بيانات الخدمة */}
+          <div style={{ padding: "12px" }}>
+            <input style={{ ...S.input, marginBottom: "6px" }} placeholder={T(lang,"اسم الخدمة","Service name")} value={s.name} onChange={e => update(s.id, "name", e.target.value)} />
+            <textarea style={{ ...S.input, marginBottom: "6px", resize: "vertical", minHeight: "60px", fontFamily: "inherit" }} placeholder={T(lang,"وصف الخدمة (اختياري)","Service description (optional)")} value={s.description || ""} onChange={e => update(s.id, "description", e.target.value)} />
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input style={{ ...S.input, marginBottom: "0", flex: 1 }} placeholder={T(lang,"المدة","Duration")} value={s.duration} onChange={e => update(s.id, "duration", e.target.value)} />
+              <input style={{ ...S.input, marginBottom: "0", flex: 1 }} placeholder={T(lang,"السعر","Price")} value={s.price} onChange={e => update(s.id, "price", e.target.value)} />
+              <button style={{ ...S.btnDanger, alignSelf: "stretch" }} onClick={() => remove(s.id)}>✕</button>
+            </div>
           </div>
         </div>
       ))}
-      <button style={{ ...S.btnGhost, width: "100%", marginBottom: "10px", color: "#c9a84c" }} onClick={add}>+ إضافة خدمة</button>
-      <button style={S.btn} onClick={save} disabled={loading}>{loading ? "جارٍ الحفظ..." : "حفظ الخدمات ✓"}</button>
+      <button style={{ ...S.btnGhost, width: "100%", marginBottom: "10px", color: "#c9a84c" }} onClick={add}>+ {T(lang,"إضافة خدمة","Add Service")}</button>
+      <button style={S.btn} onClick={save} disabled={loading}>{loading ? T(lang,"جارٍ الحفظ...","Saving...") : T(lang,"حفظ الخدمات ✓","Save Services ✓")}</button>
     </div>
   );
 }
@@ -1407,16 +1442,27 @@ function BookingPage({ slug }) {
           <>
             <div style={S.card}>
               <div style={S.sectionTitle}>{T(lang,"اختر الخدمة","Choose Service")}</div>
-              {saloon?.services?.map(sv => (
-                <div key={sv.id} onClick={() => { setSelected(p => ({ ...p, service: sv.name })); setStep(Math.max(step, 2)); }}
-                  style={{ padding: "14px 16px", borderRadius: "14px", cursor: "pointer", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", background: selected.service === sv.name ? "rgba(201,168,76,0.15)" : "#141414", border: selected.service === sv.name ? "1px solid rgba(201,168,76,0.5)" : "1px solid rgba(255,255,255,0.07)" }}>
-                  <div>
-                    <div style={{ fontSize: "14px", fontWeight: "700" }}>{sv.name}</div>
-                    <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{sv.duration}</div>
+              {saloon?.services?.map(sv => {
+                const LOGO = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'><rect width='200' height='100' fill='%23141414'/><text x='100' y='42' text-anchor='middle' font-family='Arial' font-size='13' fill='%23c9a84c' font-weight='bold' letter-spacing='3'>MAWIDS</text><text x='100' y='62' text-anchor='middle' font-family='Arial' font-size='10' fill='%23555'>مَوعِد</text><rect x='75' y='70' width='50' height='1.5' fill='%23c9a84c'/></svg>`);
+                const isSelected = selected.service === sv.name;
+                return (
+                  <div key={sv.id} onClick={() => { setSelected(p => ({ ...p, service: sv.name })); setStep(Math.max(step, 2)); }}
+                    style={{ borderRadius: "14px", cursor: "pointer", marginBottom: "10px", overflow: "hidden", border: isSelected ? "1.5px solid #c9a84c" : "1px solid rgba(255,255,255,0.07)", background: isSelected ? "rgba(201,168,76,0.05)" : "#141414" }}>
+                    {/* صورة الخدمة */}
+                    <div style={{ height: "110px", overflow: "hidden", position: "relative" }}>
+                      <img src={sv.image || LOGO} alt={sv.name} style={{ width: "100%", height: "100%", objectFit: sv.image ? "cover" : "contain", padding: sv.image ? "0" : "8px" }} />
+                      <div style={{ position: "absolute", bottom: "8px", left: "8px", background: "rgba(0,0,0,0.75)", color: "#c9a84c", fontSize: "13px", fontWeight: "800", padding: "4px 12px", borderRadius: "8px" }}>{sv.price} {T(lang,"د.إ","AED")}</div>
+                      <div style={{ position: "absolute", bottom: "8px", right: "8px", background: "rgba(0,0,0,0.75)", color: "#888", fontSize: "11px", padding: "4px 10px", borderRadius: "8px" }}>{sv.duration}</div>
+                      {isSelected && <div style={{ position: "absolute", top: "8px", left: "8px", background: "#c9a84c", color: "#0c0c0c", fontSize: "10px", fontWeight: "800", padding: "3px 10px", borderRadius: "20px" }}>✓ {T(lang,"مختار","Selected")}</div>}
+                    </div>
+                    {/* اسم ووصف */}
+                    <div style={{ padding: "10px 14px" }}>
+                      <div style={{ fontSize: "14px", fontWeight: "700", color: "#fff", marginBottom: sv.description ? "4px" : "0" }}>{sv.name}</div>
+                      {sv.description && <div style={{ fontSize: "12px", color: "#666", lineHeight: "1.7" }}>{sv.description}</div>}
+                    </div>
                   </div>
-                  <div style={{ fontSize: "16px", fontWeight: "800", color: "#c9a84c" }}>{sv.price} د.إ</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {step >= 2 && (
