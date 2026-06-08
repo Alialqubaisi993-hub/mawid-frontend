@@ -1410,16 +1410,16 @@ function BookingPage({ slug }) {
     } catch (e) { setError(e.message); }
   };
 
-  if (loading) return <div style={{ ...S.app, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}><div style={{ color: "#888" }}>جارٍ التحميل...</div></div>;
+  if (loading) return <div style={{ ...S.app(dir), display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}><div style={{ color: "#888" }}>{T(lang,"جارٍ التحميل...","Loading...")}</div></div>;
 
   if (error && !saloon) return (
-    <div style={{ ...S.app, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+    <div style={{ ...S.app(dir), display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
       <div style={{ textAlign: "center", color: "#888" }}><div style={{ fontSize: "40px", marginBottom: "12px" }}>😕</div><div>{error}</div></div>
     </div>
   );
 
   return (
-    <div style={S.app}>
+    <div style={S.app(dir)}>
       <header style={S.header}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: "14px", fontWeight: "900", color: "#c9a84c", letterSpacing: "3px" }}>MAWIDS</div>
