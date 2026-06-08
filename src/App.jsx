@@ -250,17 +250,11 @@ function LandingPage({ onLogin, onRegister }) {
     { icon: "🎯", ar: "لايف كوتش", en: "Life Coaches" },
     { icon: "💼", ar: "رجال الأعمال", en: "Business Owners" },
   ];
-  const [lang, setLang] = React.useState("ar");
+  const { lang, setLang } = useLang();
   const ar = lang === "ar";
 
   return (
     <div style={{ direction: ar ? "rtl" : "ltr" }}>
-      {/* زر تبديل اللغة */}
-      <div style={{ display: "flex", justifyContent: ar ? "flex-start" : "flex-end", padding: "8px 24px" }}>
-        <button style={{ ...S.btnGhost, fontSize: "12px", padding: "5px 12px" }} onClick={() => setLang(ar ? "en" : "ar")}>
-          {ar ? "English" : "عربي"}
-        </button>
-      </div>
 
       {/* Hero */}
       <div style={{ textAlign: "center", padding: "40px 24px 32px" }}>
@@ -357,7 +351,7 @@ function LoginPage({ onAuth, onRegister }) {
         <button style={S.btn} onClick={login} disabled={loading}>{loading ? t.logging : t.loginBtn}</button>
         <div style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#888" }}>
           ما عندك حساب؟{" "}
-          <span style={{ color: "#c9a84c", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>سجّل نشاطك مجاناً</span>
+          <span style={{ color: "#c9a84c", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>{t.registerLink}</span>
         </div>
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
@@ -433,7 +427,7 @@ function RegisterPage({ onBack }) {
   return (
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "24px", paddingTop: "16px" }}>
-        <div style={{ fontSize: "26px", fontWeight: "900" }}>سجّل نشاطك 🏪</div>
+        <div style={{ fontSize: "26px", fontWeight: "900" }}>{t.registerTitle}</div>
         <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>مجاني تماماً في البداية</div>
       </div>
       <div style={S.card}>
