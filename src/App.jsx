@@ -563,9 +563,9 @@ function AdminDashboard({ token }) {
 
       {/* تابات */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "6px", marginBottom: "16px" }}>
-        <button style={{ background: adminTab === "saloons" ? "#c9a84c" : "#141414", border: adminTab === "saloons" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "saloons" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("saloons")}>🏢 الأنشطة</button>
-        <button style={{ background: adminTab === "bookings" ? "#c9a84c" : "#141414", border: adminTab === "bookings" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "bookings" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("bookings")}>📋 الحجوزات</button>
-        <button style={{ background: adminTab === "users" ? "#c9a84c" : "#141414", border: adminTab === "users" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "users" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("users")}>👥 المستخدمين</button>
+        <button style={{ background: adminTab === "saloons" ? "#c9a84c" : "#141414", border: adminTab === "saloons" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "saloons" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("saloons")}>{T(lang,"🏢 الأنشطة","🏢 Businesses")}</button>
+        <button style={{ background: adminTab === "bookings" ? "#c9a84c" : "#141414", border: adminTab === "bookings" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "bookings" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("bookings")}>{T(lang,"📋 الحجوزات","📋 Bookings")}</button>
+        <button style={{ background: adminTab === "users" ? "#c9a84c" : "#141414", border: adminTab === "users" ? "none" : "1px solid #1e1e1e", borderRadius: "10px", padding: "10px", fontFamily: "inherit", fontSize: "12px", fontWeight: "700", color: adminTab === "users" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setAdminTab("users")}>{T(lang,"👥 المستخدمين","👥 Users")}</button>
       </div>
 
       {adminTab === "saloons" && (
@@ -651,20 +651,20 @@ function AdminBookings({ token, saloons }) {
 
       {/* أزرار سريعة */}
       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "10px" }}>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(1)}>اليوم</button>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(7)}>7 أيام</button>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(30)}>30 يوم</button>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(90)}>3 أشهر</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(1)}>{T(lang,"اليوم","Today")}</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(7)}>{T(lang,"7 أيام","7 Days")}</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(30)}>{T(lang,"30 يوم","30 Days")}</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => quickRange(90)}>{T(lang,"3 أشهر","3 Months")}</button>
       </div>
 
       {/* تواريخ */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "10px" }}>
         <div>
-          <div style={{ fontSize: "11px", color: "#555", marginBottom: "4px" }}>من</div>
+          <div style={{ fontSize: "11px", color: "#555", marginBottom: "4px" }}>{T(lang,"من","From")}</div>
           <input type="date" style={S.input} value={from} onChange={e => setFrom(e.target.value)} />
         </div>
         <div>
-          <div style={{ fontSize: "11px", color: "#555", marginBottom: "4px" }}>إلى</div>
+          <div style={{ fontSize: "11px", color: "#555", marginBottom: "4px" }}>{T(lang,"إلى","To")}</div>
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
@@ -686,7 +686,7 @@ function AdminBookings({ token, saloons }) {
 
           {/* زر PDF */}
           <button style={{ ...S.btnGhost, width: "100%", marginBottom: "14px", color: "#c9a84c", borderColor: "rgba(201,168,76,0.3)" }} onClick={() => {
-            const saloonName = saloonId ? saloons?.find(s => s.id === saloonId)?.name || lang === "ar" ? "كل الأنشطة" : "All Businesses" : lang === "ar" ? "كل الأنشطة" : "All Businesses";
+            const saloonName = saloonId ? saloons?.find(s => s.id === saloonId)?.name || lang === "ar" ? {T(lang,"كل الأنشطة","All Businesses")} : "All Businesses" : lang === "ar" ? {T(lang,"كل الأنشطة","All Businesses")} : "All Businesses";
             const rows = (data.bookings || []).map(b =>
               `<tr>
                 <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.name}</td>
@@ -1057,10 +1057,10 @@ function OwnerDashboard({ token, user, initSaloon }) {
 
       {/* تابات */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "5px", marginBottom: "14px" }}>
-        <button style={{ background: tab === "bookings" ? "#c9a84c" : "#141414", border: tab === "bookings" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "bookings" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("bookings")}>📋 مواعيد</button>
-        <button style={{ background: tab === "services" ? "#c9a84c" : "#141414", border: tab === "services" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "services" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("services")}>✂️ خدمات</button>
-        <button style={{ background: tab === "times" ? "#c9a84c" : "#141414", border: tab === "times" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "times" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("times")}>🕐 أوقات</button>
-        <button style={{ background: tab === "report" ? "#c9a84c" : "#141414", border: tab === "report" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "report" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("report")}>📊 تقرير</button>
+        <button style={{ background: tab === "bookings" ? "#c9a84c" : "#141414", border: tab === "bookings" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "bookings" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("bookings")}>{T(lang,"📋 مواعيد","📋 Appts")}</button>
+        <button style={{ background: tab === "services" ? "#c9a84c" : "#141414", border: tab === "services" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "services" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("services")}>{T(lang,"✂️ خدمات","✂️ Services")}</button>
+        <button style={{ background: tab === "times" ? "#c9a84c" : "#141414", border: tab === "times" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "times" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("times")}>{T(lang,"🕐 أوقات","🕐 Times")}</button>
+        <button style={{ background: tab === "report" ? "#c9a84c" : "#141414", border: tab === "report" ? "none" : "1px solid #1e1e1e", borderRadius: "9px", padding: "9px 4px", fontFamily: "inherit", fontSize: "11px", fontWeight: "700", color: tab === "report" ? "#0c0c0c" : "#555", cursor: "pointer" }} onClick={() => setTab("report")}>{T(lang,"📊 تقرير","📊 Report")}</button>
       </div>
 
       {tab === "bookings" && (
@@ -1211,20 +1211,20 @@ function FinancialReport({ token }) {
 
       {/* أزرار سريعة */}
       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(1); }}>اليوم</button>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(7); }}>آخر 7 أيام</button>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(30); }}>آخر 30 يوم</button>
-        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(90); }}>آخر 3 أشهر</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(1); }}>{T(lang,"اليوم","Today")}</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(7); }}>{T(lang,"آخر 7 أيام","Last 7 Days")}</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(30); }}>{T(lang,"آخر 30 يوم","Last 30 Days")}</button>
+        <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 10px" }} onClick={() => { quickRange(90); }}>{T(lang,"آخر 3 أشهر","Last 3 Months")}</button>
       </div>
 
       {/* اختيار التواريخ */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "10px" }}>
         <div>
-          <div style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>من</div>
+          <div style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>{T(lang,"من","From")}</div>
           <input type="date" style={S.input} value={from} onChange={e => setFrom(e.target.value)} />
         </div>
         <div>
-          <div style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>إلى</div>
+          <div style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>{T(lang,"إلى","To")}</div>
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
