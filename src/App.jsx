@@ -348,7 +348,7 @@ function LoginPage({ onAuth, onRegister }) {
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
         <div style={S.sectionTitle}>{T(lang,"بيانات الدخول","Login Credentials")}</div>
-        <input style={S.input} type="email" {...{placeholder: t.email}} value={email} onChange={e => setEmail(e.target.value)} />
+        <input style={S.input} type="email" placeholder={T(lang,"البريد الإلكتروني","Email address")} value={email} onChange={e => setEmail(e.target.value)} />
         <input style={S.input} type="password" placeholder={T(lang,"كلمة المرور","Password")} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && login()} />
         <button style={S.btn} onClick={login} disabled={loading}>{loading ? T(lang,"جارٍ الدخول...","Logging in...") : T(lang,"دخول ←","Login →")}</button>
         <div style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#888" }}>
@@ -435,13 +435,13 @@ function RegisterPage({ onBack }) {
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
         <div style={S.sectionTitle}>{T(lang,"بيانات الحساب","Account Information")}</div>
-        <input style={S.input} {...{placeholder: t.fullName}} value={form.name} onChange={f("name")} />
-        <input style={S.input} type="email" {...{placeholder: t.email}} value={form.email} onChange={f("email")} />
+        <input style={S.input} placeholder={T(lang,"اسمك","Your name")} value={form.name} onChange={f("name")} />
+        <input style={S.input} type="email" placeholder={T(lang,"البريد الإلكتروني","Email address")} value={form.email} onChange={f("email")} />
         <input style={S.input} type="password" placeholder={T(lang,"كلمة المرور","Password")} value={form.password} onChange={f("password")} />
         <div style={{ ...S.sectionTitle, marginTop: "8px" }}>{T(lang,"بيانات النشاط","Business Information")}</div>
         <input style={S.input} placeholder={T(lang,"اسم النشاط","Business name")} value={form.activityName} onChange={f("activityName")} />
-        <input style={S.input} {...{placeholder: t.phone}} value={form.phone} onChange={f("phone")} type="tel" />
-        <input style={S.input} {...{placeholder: t.city}} value={form.city} onChange={f("city")} />
+        <input style={S.input} placeholder={T(lang,"رقم الجوال (واتساب)","Phone (WhatsApp)")} value={form.phone} onChange={f("phone")} type="tel" />
+        <input style={S.input} placeholder={T(lang,"المدينة","City (Abu Dhabi, Dubai...)")} value={form.city} onChange={f("city")} />
 
         {/* موافقة الشروط */}
         <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", padding: "12px", background: "#0c0c0c", borderRadius: "10px", marginBottom: "12px", border: agreed ? "1px solid rgba(201,168,76,0.3)" : "1px solid #1e1e1e" }}>
@@ -823,7 +823,7 @@ function UsersManager({ token, onMsg }) {
         <div style={{ background: "#141414", borderRadius: "12px", padding: "16px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
           <div style={{ fontSize: "12px", color: "#c9a84c", fontWeight: "700", marginBottom: "10px" }}>مستخدم جديد</div>
           <input style={S.input} placeholder="الاسم" value={form.name} onChange={f("name")} />
-          <input style={S.input} {...{placeholder: t.email}} type="email" value={form.email} onChange={f("email")} />
+          <input style={S.input} placeholder={T(lang,"البريد الإلكتروني","Email address")} type="email" value={form.email} onChange={f("email")} />
           <input style={S.input} placeholder={T(lang,"كلمة المرور","Password")} type="password" value={form.password} onChange={f("password")} />
           <select style={{ ...S.input, marginBottom: "10px" }} value={form.role} onChange={f("role")}>
             <option value="owner">صاحب نشاط</option>
@@ -1367,7 +1367,7 @@ function BookingPage({ slug }) {
 
   const confirm = async () => {
     if (!name || !phone) return setError(T(lang,"أدخل اسمك ورقم جوالك","Enter your name and phone"));
-    if (phone.replace(/\s+/g, "").length < 9) return setError(t.phoneRequired);
+    if (phone.replace(/\s+/g, "").length < 9) return setError(T(lang,"أدخل رقم الجوال كاملاً","Enter full phone number"));
     setError("");
     try {
       await api(`/book/${slug}`, "POST", { name, phone, service: selected.service, day: selected.day, time: selected.time });
@@ -1469,8 +1469,8 @@ function BookingPage({ slug }) {
               <div style={S.card}>
                 <div style={S.sectionTitle}>{T(lang,"بياناتك","Your Details")}</div>
                 {error && <div style={S.error}>{error}</div>}
-                <input style={S.input} {...{placeholder: t.yourName}} value={name} onChange={e => setName(e.target.value)} />
-                <input style={S.input} {...{placeholder: t.yourPhone}} value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
+                <input style={S.input} placeholder={T(lang,"اسمك الكريم","Your name")} value={name} onChange={e => setName(e.target.value)} />
+                <input style={S.input} placeholder={T(lang,"رقم الجوال","Phone number")} value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
                 <div style={{ padding: "12px", background: "rgba(201,168,76,0.06)", borderRadius: "10px", marginBottom: "12px", fontSize: "13px", lineHeight: "2", color: "#ccc" }}>
                   <div>📋 <strong style={{ color: "#fff" }}>{selected.service}</strong></div>
                   <div>📅 <strong style={{ color: "#fff" }}>{selected.day}</strong></div>
