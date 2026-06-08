@@ -1076,7 +1076,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
                 <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
                   style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "7px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "700" }}>📞 اتصال</a>
                 <button style={{ ...S.btnDanger, fontSize: "12px" }} onClick={async () => {
-                  if (!window.confirm({t.confirmCancel})) return;
+                  if (!window.confirm(t.confirmCancel)) return;
                   try {
                     await api(`/owner/bookings/${b.id}/cancel`, "PATCH", { reason: "اعتذار من صاحب النشاط" }, token);
                     // فتح واتساب برسالة اعتذار
@@ -1477,3 +1477,4 @@ function BookingPage({ slug }) {
     </div>
   );
 }
+
