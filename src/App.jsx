@@ -376,8 +376,8 @@ function RegisterPage({ onBack }) {
   const f = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
   const submit = async () => {
-    if (!form.name || !form.email || !form.password || !form.activityName || !form.phone) return setError("جميع الحقول مطلوبة");
-    if (!agreed) return setError("يجب الموافقة على شروط الاستخدام للمتابعة");
+    if (!form.name || !form.email || !form.password || !form.activityName || !form.phone) return setError(t.allRequired);
+    if (!agreed) return setError(t.agreeTerms);
     setLoading(true); setError("");
     try { await api("/auth/register", "POST", form); setDone(true); }
     catch (e) { setError(e.message); }
@@ -524,7 +524,7 @@ function AdminDashboard({ token }) {
         </div>
         {stats.pending > 0 && (
           <div style={{ background: "rgba(255,150,50,0.15)", border: "1px solid rgba(255,150,50,0.4)", borderRadius: "20px", padding: "4px 12px", fontSize: "11px", color: "#ff9632", fontWeight: "700" }}>
-            🔔 {stats.pending} معلق
+            🔔 {stats.pending} suspended
           </div>
         )}
       </div>
@@ -1043,7 +1043,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
         <div style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "12px", padding: "12px 14px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px" }}>
           <div style={{ fontSize: "11px", color: "#c9a84c", wordBreak: "break-all", flex: 1 }}>🔗 {window.location.origin}/book/{saloon.slug}</div>
           <button style={{ ...S.btn, padding: "8px 14px", fontSize: "11px", whiteSpace: "nowrap", width: "auto" }} onClick={copyLink}>
-            {copied ? "✓ نُسخ" : "📋 نسخ"}
+            {copied ? t.copied : t.copyLink}
           </button>
         </div>
       )}
@@ -1358,8 +1358,8 @@ function BookingPage({ slug }) {
   }, [selected.day, saloon, slug]);
 
   const confirm = async () => {
-    if (!name || !phone) return setError("أدخل اسمك ورقم جوالك");
-    if (phone.replace(/\s+/g, "").length < 9) return setError("أدخل رقم الجوال كاملاً");
+    if (!name || !phone) return setError(t.enterDetails);
+    if (phone.replace(/\s+/g, "").length < 9) return setError(t.phoneRequired);
     setError("");
     try {
       await api(`/book/${slug}`, "POST", { name, phone, service: selected.service, day: selected.day, time: selected.time });
