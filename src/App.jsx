@@ -580,7 +580,7 @@ function AdminDashboard({ token }) {
                     <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>mawids.com/book/{s.slug}</div>
                   </div>
                   <span style={badge(s.status === "active" ? "green" : s.status === "pending" ? "orange" : "")}>
-                    {s.status === "active" ? {t.activeActivities} : s.status === "pending" ? {t.pendingActivities} : "موقوف"}
+                    {s.status === "active" ? t.activeActivities : s.status === "pending" ? t.pendingActivities : "موقوف"}
                   </span>
                 </div>
                 <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
@@ -1220,7 +1220,7 @@ function FinancialReport({ token }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : {t.showReport}}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : t.showReport}</button>
 
       {report && (
         <div style={{ marginTop: "16px" }}>
