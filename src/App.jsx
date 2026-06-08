@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
 import translations from "./i18n";
 
-const LangContext = createContext({ lang: "ar", t: translations.ar, setLang: () => {} });
+const LangContext = createContext({ lang: "ar", t: translations.ar, setLang: () => {}, lang: "ar" });
 const useLang = () => useContext(LangContext);
+
+// دالة مساعدة للترجمة السريعة
+const T = (lang, ar, en) => lang === "en" ? en : ar;
+const getLang = () => localStorage.getItem("mawid_lang") || "ar";
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
 
@@ -321,14 +325,14 @@ function LandingPage({ onLogin, onRegister }) {
 }
 
 function LoginPage({ onAuth, onRegister }) {
-  const { t, dir } = useLang();
+  const { t, dir, lang } = useLang();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const login = async () => {
-    if (!email || !password) return setError("أدخل البريد وكلمة المرور");
+    if (!email || !password) return setError(T(lang,"أدخل البريد وكلمة المرور","Enter email and password"));
     setLoading(true); setError("");
     try {
       const data = await api("/auth/login", "POST", { email, password });
@@ -366,7 +370,7 @@ function LoginPage({ onAuth, onRegister }) {
 }
 
 function RegisterPage({ onBack }) {
-  const { t, dir } = useLang();
+  const { t, dir, lang } = useLang();
   const [form, setForm] = useState({ name: "", email: "", password: "", activityName: "", phone: "", city: "" });
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
@@ -406,8 +410,8 @@ function RegisterPage({ onBack }) {
         ))}
 
         <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-          <button style={S.btn} onClick={() => { setAgreed(true); setShowTerms(false); }}>✓ أوافق على الشروط</button>
-          <button style={S.btnGhost} onClick={() => setShowTerms(false)}>رجوع</button>
+          <button style={S.btn} onClick={() => { setAgreed(true); setShowTerms(false); }}>{T(lang,"✓ أوافق على الشروط","✓ I Agree to Terms")}</button>
+          <button style={S.btnGhost} onClick={() => setShowTerms(false)}>{T(lang,"رجوع","Back")}</button>
         </div>
       </div>
     </div>
@@ -417,9 +421,9 @@ function RegisterPage({ onBack }) {
     <div style={S.container}>
       <div style={{ ...S.card, textAlign: "center", padding: "40px 24px" }}>
         <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 20px" }}>✓</div>
-        <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "8px" }}>تم إرسال الطلب!</div>
+        <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "8px" }}>{T(lang,"تم إرسال الطلب!","Request Sent!")}</div>
         <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>{t.requestSentSub}</div>
-        <button style={{ ...S.btn, marginTop: "24px" }} onClick={onBack}>رجوع للدخول</button>
+        <button style={{ ...S.btn, marginTop: "24px" }} onClick={onBack}>{T(lang,"رجوع للدخول","Back to Login")}</button>
       </div>
     </div>
   );
@@ -428,7 +432,7 @@ function RegisterPage({ onBack }) {
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "24px", paddingTop: "16px" }}>
         <div style={{ fontSize: "26px", fontWeight: "900" }}>{t.registerTitle}</div>
-        <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>مجاني تماماً في البداية</div>
+        <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>{T(lang,"مجاني تماماً في البداية","Completely free to start")}</div>
       </div>
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
@@ -520,7 +524,7 @@ function AdminDashboard({ token }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", marginBottom: "16px" }}>
         <div>
           <div style={{ fontSize: "11px", color: "#555", letterSpacing: "2px", marginBottom: "2px" }}>MAWIDS</div>
-          <div style={{ fontSize: "18px", fontWeight: "900", color: "#fff" }}>لوحة التحكم</div>
+          <div style={{ fontSize: "18px", fontWeight: "900", color: "#fff" }}>{T(lang,"لوحة التحكم","Control Panel")}</div>
         </div>
         {stats.pending > 0 && (
           <div style={{ background: "rgba(255,150,50,0.15)", border: "1px solid rgba(255,150,50,0.4)", borderRadius: "20px", padding: "4px 12px", fontSize: "11px", color: "#ff9632", fontWeight: "700" }}>
@@ -539,15 +543,15 @@ function AdminDashboard({ token }) {
         </div>
         <div style={{ background: "#141414", border: "1px solid rgba(37,209,102,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#25d166" }}>{stats.active || 0}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{lang === "ar" ? "نشط" : "active"}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{T(lang,"نشط","active")}</div>
         </div>
         <div style={{ background: "#141414", border: "1px solid rgba(255,150,50,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#ff9632" }}>{stats.pending || 0}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{lang === "ar" ? "معلق" : "pending"}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{T(lang,"معلق","pending")}</div>
         </div>
         <div style={{ background: "#141414", border: "1px solid rgba(100,160,255,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#64a0ff" }}>{stats.totalBookings || 0}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{lang === "ar" ? "حجز" : "bookings"}</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{T(lang,"حجز","bookings")}</div>
         </div>
       </div>
 
@@ -569,7 +573,7 @@ function AdminDashboard({ token }) {
           <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>جارٍ التحميل...</div>
         ) : (
           <div style={S.card}>
-            <div style={S.sectionTitle}>الأنشطة المسجلة ({saloons.length})</div>
+            <div style={S.sectionTitle}>{T(lang,"الأنشطة المسجلة","Registered Businesses")} ({saloons.length})</div>
             {saloons.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد أنشطة بعد</div>}
             {saloons.map(s => (
               <div key={s.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "14px", marginBottom: "14px" }}>
@@ -588,9 +592,9 @@ function AdminDashboard({ token }) {
                   <span style={{ ...badge("green"), fontSize: "11px" }}>💰 {(s.totalAmount || 0).toLocaleString()} د.إ</span>
                 </div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                  {s.status === "pending" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>✓ تفعيل</button>}
-                  {s.status === "active" && <button style={S.btnDanger} onClick={() => setStatus(s.id, "suspended")}>⏸ إيقاف</button>}
-                  {s.status === "suspended" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>▶ إعادة تفعيل</button>}
+                  {s.status === "pending" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>{T(lang,"✓ تفعيل","✓ Activate")}</button>}
+                  {s.status === "active" && <button style={S.btnDanger} onClick={() => setStatus(s.id, "suspended")}>{T(lang,"⏸ إيقاف","⏸ Suspend")}</button>}
+                  {s.status === "suspended" && <button style={S.btnSuccess} onClick={() => setStatus(s.id, "active")}>{T(lang,"▶ إعادة تفعيل","▶ Reactivate")}</button>}
                   <button style={{ ...S.btnGhost, fontSize: "12px", padding: "7px 14px" }} onClick={() => setEditingSaloon(s)}>{lang === "ar" ? "✏️ تعديل" : "✏️ Edit"}</button>
                 </div>
               </div>
@@ -608,7 +612,7 @@ function AdminDashboard({ token }) {
 
 
 function AdminBookings({ token, saloons }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const today = new Date().toISOString().slice(0, 10);
   const [from, setFrom] = useState(today);
   const [to, setTo] = useState(today);
@@ -672,11 +676,11 @@ function AdminBookings({ token, saloons }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "14px" }}>
             <div style={S.statCard}>
               <div style={{ ...S.statNum, fontSize: "22px" }}>{data.totalBookings}</div>
-              <div style={S.statLabel}>إجمالي الحجوزات</div>
+              <div style={S.statLabel}>{T(lang,"إجمالي الحجوزات","Total Bookings")}</div>
             </div>
             <div style={S.statCard}>
               <div style={{ ...S.statNum, fontSize: "22px", color: "#25d166" }}>{(data.totalAmount || 0).toLocaleString()}</div>
-              <div style={S.statLabel}>إجمالي المبالغ (د.إ)</div>
+              <div style={S.statLabel}>{T(lang,"إجمالي المبالغ (د.إ)","Total Revenue (AED)")}</div>
             </div>
           </div>
 
@@ -721,7 +725,7 @@ function AdminBookings({ token, saloons }) {
 <div class="sub">Mawids.com — منصة إدارة الحجوزات</div>
 <div class="period">النشاط: ${saloonName} | الفترة: من ${from} إلى ${to}</div>
 <div class="summary">
-  <div class="sc"><div class="sn">${data.totalBookings}</div><div class="sl">إجمالي الحجوزات</div></div>
+  <div class="sc"><div class="sn">${data.totalBookings}</div><div class="sl">{T(lang,"إجمالي الحجوزات","Total Bookings")}</div></div>
   <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">{t.totalAmount}</div></div>
 </div>
 <table>
@@ -734,11 +738,11 @@ function AdminBookings({ token, saloons }) {
             win.document.write(html);
             win.document.close();
             setTimeout(() => win.print(), 800);
-          }}>📄 تحميل التقرير PDF</button>
+          }}>{T(lang,"📄 تحميل التقرير PDF","📄 Download PDF")}</button>
 
-          <div style={S.sectionTitle}>تفاصيل الحجوزات</div>
+          <div style={S.sectionTitle}>{T(lang,"تفاصيل الحجوزات","Booking Details")}</div>
           {data.bookings?.length === 0 && (
-            <div style={{ color: "#555", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد حجوزات في هذه الفترة</div>
+            <div style={{ color: "#555", fontSize: "13px", textAlign: "center", padding: "20px" }}>{T(lang,"لا توجد حجوزات في هذه الفترة","No bookings in this period")}</div>
           )}
           {data.bookings?.map(b => (
             <div key={b.id} style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: "12px", marginBottom: "12px" }}>
@@ -753,7 +757,7 @@ function AdminBookings({ token, saloons }) {
                   target="_blank" rel="noreferrer"
                   style={{ ...S.btnSuccess, textDecoration: "none", fontSize: "11px" }}>💬 {b.phone}</a>
                 <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
-                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "5px 12px", borderRadius: "8px", textDecoration: "none", fontSize: "11px", fontWeight: "700" }}>📞 اتصال</a>
+                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "5px 12px", borderRadius: "8px", textDecoration: "none", fontSize: "11px", fontWeight: "700" }}>{T(lang,"📞 اتصال","📞 Call")}</a>
               </div>
             </div>
           ))}
@@ -764,7 +768,7 @@ function AdminBookings({ token, saloons }) {
 }
 
 function UsersManager({ token, onMsg }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -864,7 +868,7 @@ function UsersManager({ token, onMsg }) {
 }
 
 function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [tab, setTab] = useState("services");
   const [services, setServices] = useState(saloon.services || []);
   const [days, setDays] = useState(saloon.work_days || []);
@@ -1005,7 +1009,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
       <div style={{ ...S.card, textAlign: "center", padding: "40px" }}>
         <div style={{ fontSize: "40px", marginBottom: "12px" }}>⏳</div>
         <div style={{ fontWeight: "800", fontSize: "18px" }}>الحساب قيد المراجعة</div>
-        <div style={{ color: "#888", fontSize: "13px", marginTop: "8px" }}>سيتواصل معك المدير لتفعيل نشاطك</div>
+        <div style={{ color: "#888", fontSize: "13px", marginTop: "8px" }}>{T(lang,"سيتواصل معك المدير لتفعيل نشاطك","The admin will activate your account")}</div>
       </div>
     </div>
   );
@@ -1029,7 +1033,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "6px", marginBottom: "10px" }}>
         <div style={{ background: "#141414", border: "1px solid rgba(201,168,76,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#c9a84c" }}>{bookings.length}</div>
-          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>مواعيد اليوم</div>
+          <div style={{ fontSize: "9px", color: "#444", marginTop: "2px" }}>{T(lang,"مواعيد اليوم","Today")}</div>
         </div>
         <div style={{ background: "#141414", border: "1px solid rgba(37,209,102,0.12)", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: "900", color: "#25d166" }}>{(saloon?.services || []).length}</div>
@@ -1063,7 +1067,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
         <div style={S.card}>
           <div style={S.sectionTitle}>المواعيد ({bookings.length})</div>
           {loading && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>جارٍ التحميل...</div>}
-          {!loading && bookings.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد مواعيد اليوم</div>}
+          {!loading && bookings.length === 0 && <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>{T(lang,"لا توجد مواعيد اليوم","No appointments today")}</div>}
           {bookings.map(b => (
             <div key={b.id} style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: "14px", marginBottom: "14px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -1075,9 +1079,9 @@ function OwnerDashboard({ token, user, initSaloon }) {
               </div>
               <div style={{ display: "flex", gap: "8px", marginTop: "10px", flexWrap: "wrap" }}>
                 <a href={`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}?text=${encodeURIComponent("أهلاً " + b.name + " 👋\nنذكّرك بموعدك:\n📋 " + b.service + "\n📅 " + b.day + " — " + b.time + "\nنتطلع لاستقبالك 🙏")}`} target="_blank" rel="noreferrer"
-                  style={{ ...S.btnSuccess, textDecoration: "none" }}>💬 واتساب</a>
+                  style={{ ...S.btnSuccess, textDecoration: "none" }}>{T(lang,"💬 واتساب","💬 WhatsApp")}</a>
                 <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
-                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "7px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "700" }}>📞 اتصال</a>
+                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "7px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "700" }}>{T(lang,"📞 اتصال","📞 Call")}</a>
                 <button style={{ ...S.btnDanger, fontSize: "12px" }} onClick={async () => {
                   if (!window.confirm(t.confirmCancel)) return;
                   try {
@@ -1087,7 +1091,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
                     window.open(`https://wa.me/${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}?text=${cancelMsg}`, "_blank");
                     loadData();
                   } catch (e) { alert("حدث خطأ: " + e.message); }
-                }}>✕ إلغاء</button>
+                }}>{T(lang,"✕ إلغاء","✕ Cancel")}</button>
               </div>
             </div>
           ))}
@@ -1106,7 +1110,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
 }
 
 function FinancialReport({ token }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const today = new Date().toISOString().slice(0, 10);
   const [from, setFrom] = useState(today);
   const [to, setTo] = useState(today);
@@ -1172,7 +1176,7 @@ function FinancialReport({ token }) {
 <div class="summary">
   <div class="summary-card">
     <div class="summary-num">${report.totalBookings}</div>
-    <div class="summary-label">إجمالي الحجوزات</div>
+    <div class="summary-label">{T(lang,"إجمالي الحجوزات","Total Bookings")}</div>
   </div>
   <div class="summary-card">
     <div class="summary-num green">${(report.totalAmount || 0).toLocaleString()} د.إ</div>
@@ -1203,7 +1207,7 @@ function FinancialReport({ token }) {
 
   return (
     <div style={S.card}>
-      <div style={S.sectionTitle}>📊 التقرير المالي</div>
+      <div style={S.sectionTitle}>{T(lang,"📊 التقرير المالي","📊 Financial Report")}</div>
 
       {/* أزرار سريعة */}
       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
@@ -1232,11 +1236,11 @@ function FinancialReport({ token }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "14px" }}>
             <div style={{ ...S.statCard }}>
               <div style={{ ...S.statNum, fontSize: "22px" }}>{report.totalBookings}</div>
-              <div style={S.statLabel}>إجمالي الحجوزات</div>
+              <div style={S.statLabel}>{T(lang,"إجمالي الحجوزات","Total Bookings")}</div>
             </div>
             <div style={{ ...S.statCard }}>
               <div style={{ ...S.statNum, fontSize: "22px", color: "#25d166" }}>{(report.totalAmount || 0).toLocaleString()}</div>
-              <div style={S.statLabel}>إجمالي المبالغ (د.إ)</div>
+              <div style={S.statLabel}>{T(lang,"إجمالي المبالغ (د.إ)","Total Revenue (AED)")}</div>
             </div>
           </div>
 
@@ -1246,9 +1250,9 @@ function FinancialReport({ token }) {
           </button>
 
           {/* التفاصيل */}
-          <div style={S.sectionTitle}>تفاصيل الحجوزات</div>
+          <div style={S.sectionTitle}>{T(lang,"تفاصيل الحجوزات","Booking Details")}</div>
           {report.bookings?.length === 0 && (
-            <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>لا توجد حجوزات في هذه الفترة</div>
+            <div style={{ color: "#888", fontSize: "13px", textAlign: "center", padding: "20px" }}>{T(lang,"لا توجد حجوزات في هذه الفترة","No bookings in this period")}</div>
           )}
           {report.bookings?.map(b => (
             <div key={b.id} style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: "12px", marginBottom: "12px" }}>
@@ -1265,7 +1269,7 @@ function FinancialReport({ token }) {
                   target="_blank" rel="noreferrer"
                   style={{ ...S.btnSuccess, textDecoration: "none", fontSize: "11px" }}>💬 {b.phone}</a>
                 <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
-                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "5px 12px", borderRadius: "8px", textDecoration: "none", fontSize: "11px", fontWeight: "700" }}>📞 اتصال</a>
+                  style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "5px 12px", borderRadius: "8px", textDecoration: "none", fontSize: "11px", fontWeight: "700" }}>{T(lang,"📞 اتصال","📞 Call")}</a>
               </div>
             </div>
           ))}
@@ -1276,7 +1280,7 @@ function FinancialReport({ token }) {
 }
 
 function ServicesEditor({ saloon, token, onSave }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [services, setServices] = useState(saloon.services || []);
   const [loading, setLoading] = useState(false);
   const add = () => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "" }]);
@@ -1308,7 +1312,7 @@ function ServicesEditor({ saloon, token, onSave }) {
 }
 
 function TimesEditor({ saloon, token, onSave }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const ALL_DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   const DEFAULT_TIMES = ["8:00 ص","8:30 ص","9:00 ص","9:30 ص","10:00 ص","10:30 ص","11:00 ص","11:30 ص","12:00 م","1:00 م","1:30 م","2:00 م","2:30 م","3:00 م","3:30 م","4:00 م","4:30 م","5:00 م","5:30 م","6:00 م"];
   const [days, setDays] = useState(saloon.workDays || saloon.work_days || []);
@@ -1342,7 +1346,7 @@ function TimesEditor({ saloon, token, onSave }) {
 }
 
 function BookingPage({ slug }) {
-  const { t, dir } = useLang();
+  const { t, dir, lang } = useLang();
   const [saloon, setSaloon] = useState(null);
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState({ service: null, day: null, time: null });
@@ -1394,17 +1398,17 @@ function BookingPage({ slug }) {
         {done ? (
           <div style={{ ...S.card, textAlign: "center", padding: "40px 24px", marginTop: "20px" }}>
             <div style={{ width: "70px", height: "70px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px", margin: "0 auto 20px" }}>✓</div>
-            <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "10px" }}>تم الحجز بنجاح! 🎉</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "10px" }}>{T(lang,"تم الحجز بنجاح! 🎉","Booking Confirmed! 🎉")}</div>
             <div style={{ fontSize: "13px", color: "#888", lineHeight: "2" }}>
               <div><span style={{ color: "#fff" }}>{selected.service}</span></div>
               <div><span style={{ color: "#fff" }}>{selected.day} — {selected.time}</span></div>
-              <div style={{ marginTop: "8px" }}>سيتواصل معك صاحب النشاط للتأكيد</div>
+              <div style={{ marginTop: "8px" }}>{T(lang,"سيتواصل معك صاحب النشاط للتأكيد","The business will contact you")}</div>
             </div>
           </div>
         ) : (
           <>
             <div style={S.card}>
-              <div style={S.sectionTitle}>اختر الخدمة</div>
+              <div style={S.sectionTitle}>{T(lang,"اختر الخدمة","Choose Service")}</div>
               {saloon?.services?.map(sv => (
                 <div key={sv.id} onClick={() => { setSelected(p => ({ ...p, service: sv.name })); setStep(Math.max(step, 2)); }}
                   style={{ padding: "14px 16px", borderRadius: "14px", cursor: "pointer", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", background: selected.service === sv.name ? "rgba(201,168,76,0.15)" : "#141414", border: selected.service === sv.name ? "1px solid rgba(201,168,76,0.5)" : "1px solid rgba(255,255,255,0.07)" }}>
@@ -1419,7 +1423,7 @@ function BookingPage({ slug }) {
 
             {step >= 2 && (
               <div style={S.card}>
-                <div style={S.sectionTitle}>اختر اليوم</div>
+                <div style={S.sectionTitle}>{T(lang,"اختر اليوم","Choose Day")}</div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {(saloon?.workDays || saloon?.work_days)?.map(d => (
                     <button key={d} onClick={() => { setSelected(p => ({ ...p, day: d, time: null })); setStep(Math.max(step, 3)); }}
@@ -1431,7 +1435,7 @@ function BookingPage({ slug }) {
 
             {step >= 3 && selected.day && (
               <div style={S.card}>
-                <div style={S.sectionTitle}>اختر الوقت</div>
+                <div style={S.sectionTitle}>{T(lang,"اختر الوقت","Choose Time")}</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px" }}>
                   {(saloon?.timeSlots || saloon?.time_slots)?.map(t => {
                     const booked = bookedSlots.includes(t);
@@ -1465,7 +1469,7 @@ function BookingPage({ slug }) {
 
             {step >= 4 && selected.time && (
               <div style={S.card}>
-                <div style={S.sectionTitle}>بياناتك</div>
+                <div style={S.sectionTitle}>{T(lang,"بياناتك","Your Details")}</div>
                 {error && <div style={S.error}>{error}</div>}
                 <input style={S.input} {...{placeholder: t.yourName}} value={name} onChange={e => setName(e.target.value)} />
                 <input style={S.input} {...{placeholder: t.yourPhone}} value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
@@ -1474,7 +1478,7 @@ function BookingPage({ slug }) {
                   <div>📅 <strong style={{ color: "#fff" }}>{selected.day}</strong></div>
                   <div>🕐 <strong style={{ color: "#fff" }}>{selected.time}</strong></div>
                 </div>
-                <button style={S.btn} onClick={confirm}>تأكيد الحجز ✓</button>
+                <button style={S.btn} onClick={confirm}>{T(lang,"تأكيد الحجز ✓","Confirm Booking ✓")}</button>
               </div>
             )}
           </>
