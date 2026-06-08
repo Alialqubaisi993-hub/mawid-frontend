@@ -418,7 +418,7 @@ function RegisterPage({ onBack }) {
       <div style={{ ...S.card, textAlign: "center", padding: "40px 24px" }}>
         <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 20px" }}>✓</div>
         <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "8px" }}>تم إرسال الطلب!</div>
-        <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>سيتواصل معك فريق مَوعِد خلال 24 ساعة<br />لتفعيل حسابك وإرسال رابط الحجز الخاص بنشاطك 🎉</div>
+        <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>{t.requestSentSub}</div>
         <button style={{ ...S.btn, marginTop: "24px" }} onClick={onBack}>رجوع للدخول</button>
       </div>
     </div>
@@ -467,7 +467,7 @@ function RegisterPage({ onBack }) {
 }
 
 function AdminDashboard({ token }) {
-  const { t, dir } = useLang();
+  const { t, dir, lang } = useLang();
   const [saloons, setSaloons] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -524,7 +524,7 @@ function AdminDashboard({ token }) {
         </div>
         {stats.pending > 0 && (
           <div style={{ background: "rgba(255,150,50,0.15)", border: "1px solid rgba(255,150,50,0.4)", borderRadius: "20px", padding: "4px 12px", fontSize: "11px", color: "#ff9632", fontWeight: "700" }}>
-            🔔 {stats.pending} suspended
+            🔔 {stats.pending} {lang === "ar" ? "معلق" : "pending"}
           </div>
         )}
       </div>
@@ -580,7 +580,7 @@ function AdminDashboard({ token }) {
                     <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>mawids.com/book/{s.slug}</div>
                   </div>
                   <span style={badge(s.status === "active" ? "green" : s.status === "pending" ? "orange" : "")}>
-                    {s.status === "active" ? t.activeActivities : s.status === "pending" ? t.pendingActivities : "موقوف"}
+                    {s.status === "active" ? (lang === "ar" ? "نشط" : "Active") : s.status === "pending" ? (lang === "ar" ? "معلق" : "Pending") : (lang === "ar" ? "موقوف" : "Suspended")}
                   </span>
                 </div>
                 <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
@@ -722,7 +722,7 @@ function AdminBookings({ token, saloons }) {
 <div class="period">النشاط: ${saloonName} | الفترة: من ${from} إلى ${to}</div>
 <div class="summary">
   <div class="sc"><div class="sn">${data.totalBookings}</div><div class="sl">إجمالي الحجوزات</div></div>
-  <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">إجمالي المبالغ</div></div>
+  <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">{t.totalAmount}</div></div>
 </div>
 <table>
   <thead><tr><th>الزبون</th><th>الجوال</th><th>النشاط</th><th>الخدمة</th><th>الموعد</th><th>التاريخ</th><th>المبلغ</th></tr></thead>
@@ -966,7 +966,7 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
 }
 
 function OwnerDashboard({ token, user, initSaloon }) {
-  const { t, dir } = useLang();
+  const { t, dir, lang } = useLang();
   const [saloon, setSaloon] = useState(initSaloon);
   const [bookings, setBookings] = useState([]);
   const [tab, setTab] = useState("bookings");
@@ -1019,7 +1019,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
           <div style={{ fontSize: "16px", fontWeight: "900", color: "#fff" }}>{saloon?.name || "..."}</div>
         </div>
         <span style={badge(saloon?.status === "active" ? "green" : "orange")}>
-          {saloon?.status === "active" ? "نشط ✓" : "غير مفعّل"}
+          {saloon?.status === "active" ? (lang === "ar" ? "نشط ✓" : "Active ✓") : (lang === "ar" ? "غير مفعّل" : "Inactive")}
         </span>
       </div>
 
@@ -1176,7 +1176,7 @@ function FinancialReport({ token }) {
   </div>
   <div class="summary-card">
     <div class="summary-num green">${(report.totalAmount || 0).toLocaleString()} د.إ</div>
-    <div class="summary-label">إجمالي المبالغ</div>
+    <div class="summary-label">{t.totalAmount}</div>
   </div>
 </div>
 <table>
