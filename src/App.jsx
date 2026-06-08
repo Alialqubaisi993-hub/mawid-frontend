@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
-import translations from "./i18n";
 
-const LangContext = createContext({ lang: "ar", t: translations.ar, setLang: () => {}, lang: "ar" });
+const LangContext = createContext({ lang: "ar", setLang: () => {} });
 const useLang = () => useContext(LangContext);
 
 // دالة مساعدة للترجمة السريعة
@@ -182,7 +181,6 @@ export default function App() {
     return "home";
   });
   const [lang, setLang] = useState(() => localStorage.getItem("mawid_lang") || "ar");
-  const t = translations[lang] || translations.ar;
   const dir = lang === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
@@ -203,7 +201,7 @@ export default function App() {
 
   const logout = () => setAuth(null);
 
-  const langValue = { lang, t, setLang, dir };
+  const langValue = { lang, setLang, dir };
 
   if (page.startsWith("book:")) return (
     <LangContext.Provider value={langValue}>
@@ -225,10 +223,10 @@ export default function App() {
               {lang === "ar" ? "EN" : "ع"}
             </button>
             {!auth && <>
-              <button style={S.btnGhost} onClick={() => setPage("login")}>{t.login}</button>
-              <button style={{ ...S.btnGhost, color: "#c9a84c", borderColor: "rgba(201,168,76,0.3)" }} onClick={() => setPage("register")}>{t.register}</button>
+              <button style={S.btnGhost} onClick={() => setPage("login")}>{T(lang,"دخول","Login")}</button>
+              <button style={{ ...S.btnGhost, color: "#c9a84c", borderColor: "rgba(201,168,76,0.3)" }} onClick={() => setPage("register")}>{T(lang,"سجّل نشاطك","Register")}</button>
             </>}
-            {auth && <button style={S.btnGhost} onClick={logout}>{t.logout}</button>}
+            {auth && <button style={S.btnGhost} onClick={logout}>{T(lang,"خروج ↩","Logout ↩")}</button>}
           </div>
         </header>
         {page === "home" && <LandingPage onLogin={() => setPage("login")} onRegister={() => setPage("register")} />}
@@ -325,7 +323,7 @@ function LandingPage({ onLogin, onRegister }) {
 }
 
 function LoginPage({ onAuth, onRegister }) {
-  const { t, dir, lang } = useLang();
+  const { lang, dir } = useLang();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -344,22 +342,22 @@ function LoginPage({ onAuth, onRegister }) {
   return (
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "28px", paddingTop: "16px" }}>
-        <div style={{ fontSize: "32px", fontWeight: "900", marginBottom: "6px" }}>{t.welcome}</div>
-        <div style={{ fontSize: "13px", color: "#888" }}>{t.welcomeSub}</div>
+        <div style={{ fontSize: "32px", fontWeight: "900", marginBottom: "6px" }}>{T(lang,"أهلاً بك 👋","Welcome 👋")}</div>
+        <div style={{ fontSize: "13px", color: "#888" }}>{T(lang,"سجّل دخولك لإدارة نشاطك","Login to manage your business")}</div>
       </div>
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
-        <div style={S.sectionTitle}>{t.loginCredentials}</div>
+        <div style={S.sectionTitle}>{T(lang,"بيانات الدخول","Login Credentials")}</div>
         <input style={S.input} type="email" {...{placeholder: t.email}} value={email} onChange={e => setEmail(e.target.value)} />
         <input style={S.input} type="password" {...{placeholder: t.password}} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && login()} />
-        <button style={S.btn} onClick={login} disabled={loading}>{loading ? t.logging : t.loginBtn}</button>
+        <button style={S.btn} onClick={login} disabled={loading}>{loading ? T(lang,"جارٍ الدخول...","Logging in...") : T(lang,"دخول ←","Login →")}</button>
         <div style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#888" }}>
           ما عندك حساب؟{" "}
-          <span style={{ color: "#c9a84c", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>{t.registerLink}</span>
+          <span style={{ color: "#c9a84c", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>{T(lang,"سجّل نشاطك مجاناً","Register your business for free")}</span>
         </div>
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
-        <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>{t.contactUs}</div>
+        <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>{T(lang,"هل تريد تسجيل نشاطك؟ تواصل معنا","Want to register? Contact us")}</div>
         <a href="https://wa.me/971508177760?text=أهلاً، أريد تسجيل نشاطي في مَوعِد" target="_blank" rel="noreferrer"
           style={{ display: "inline-block", background: "linear-gradient(135deg,#25d166,#128C7E)", color: "#fff", padding: "10px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", fontWeight: "700" }}>
           💬 تواصل عبر واتساب
@@ -370,7 +368,7 @@ function LoginPage({ onAuth, onRegister }) {
 }
 
 function RegisterPage({ onBack }) {
-  const { t, dir, lang } = useLang();
+  const { lang, dir } = useLang();
   const [form, setForm] = useState({ name: "", email: "", password: "", activityName: "", phone: "", city: "" });
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
@@ -394,14 +392,14 @@ function RegisterPage({ onBack }) {
         <button style={S.btnGhost} onClick={() => setShowTerms(false)}>← رجوع</button>
       </div>
       <div style={S.card}>
-        <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", marginBottom: "16px", textAlign: "center" }}>{t.termsTitle}</div>
+        <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", marginBottom: "16px", textAlign: "center" }}>{T(lang,"شروط الاستخدام والعقد","Terms of Use & Agreement")}</div>
 
         {[
-          { title: t.term1Title, body: t.term1Body },
-          { title: t.term2Title, body: t.term2Body },
-          { title: t.term3Title, body: t.term3Body },
-          { title: t.term4Title, body: t.term4Body },
-          { title: t.term5Title, body: t.term5Body },
+          { title: T(lang,"📋 تعريف المنصة","📋 Platform Definition"), body: T(lang,"مَوعِد وسيط تقني فقط","Mawids is a technology intermediary only") },
+          { title: T(lang,"💰 السياسة المالية","💰 Financial Policy"), body: T(lang,"✅ مَوعِد لا تأخذ أي رسوم من الزبائن أبداً","✅ Mawids charges NO fees from customers") },
+          { title: T(lang,"🎁 الفترة التجريبية","🎁 Trial Period"), body: T(lang,"التسجيل مجاني تماماً في هذه المرحلة","Registration is completely free at this stage") },
+          { title: T(lang,"✅ مسؤوليات صاحب النشاط","✅ Business Owner Responsibilities"), body: T(lang,"• تقديم معلومات صحيحة عند التسجيل","• Provide accurate information upon registration") },
+          { title: T(lang,"⚖️ إخلاء المسؤولية","⚖️ Disclaimer"), body: T(lang,"⚠️ مَوعِد غير مسؤولة عن جودة الخدمات","⚠️ Mawids is not responsible for the quality of services") },
         ].map((s, i) => (
           <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(201,168,76,0.1)", borderRadius: "12px", padding: "14px", marginBottom: "10px" }}>
             <div style={{ fontSize: "12px", fontWeight: "800", color: "#c9a84c", marginBottom: "8px" }}>{s.title}</div>
@@ -422,7 +420,7 @@ function RegisterPage({ onBack }) {
       <div style={{ ...S.card, textAlign: "center", padding: "40px 24px" }}>
         <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 20px" }}>✓</div>
         <div style={{ fontSize: "22px", fontWeight: "800", marginBottom: "8px" }}>{T(lang,"تم إرسال الطلب!","Request Sent!")}</div>
-        <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>{t.requestSentSub}</div>
+        <div style={{ fontSize: "13px", color: "#888", lineHeight: "1.8" }}>{T(lang,"سيتواصل معك فريق مَوعِد خلال 24 ساعة لتفعيل حسابك 🎉","The Mawids team will contact you within 24 hours 🎉")}</div>
         <button style={{ ...S.btn, marginTop: "24px" }} onClick={onBack}>{T(lang,"رجوع للدخول","Back to Login")}</button>
       </div>
     </div>
@@ -431,16 +429,16 @@ function RegisterPage({ onBack }) {
   return (
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "24px", paddingTop: "16px" }}>
-        <div style={{ fontSize: "26px", fontWeight: "900" }}>{t.registerTitle}</div>
+        <div style={{ fontSize: "26px", fontWeight: "900" }}>{T(lang,"سجّل نشاطك 🏪","Register Your Business 🏪")}</div>
         <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>{T(lang,"مجاني تماماً في البداية","Completely free to start")}</div>
       </div>
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
-        <div style={S.sectionTitle}>{t.accountData}</div>
+        <div style={S.sectionTitle}>{T(lang,"بيانات الحساب","Account Information")}</div>
         <input style={S.input} {...{placeholder: t.fullName}} value={form.name} onChange={f("name")} />
         <input style={S.input} type="email" {...{placeholder: t.email}} value={form.email} onChange={f("email")} />
         <input style={S.input} type="password" {...{placeholder: t.password}} value={form.password} onChange={f("password")} />
-        <div style={{ ...S.sectionTitle, marginTop: "8px" }}>{t.activityData}</div>
+        <div style={{ ...S.sectionTitle, marginTop: "8px" }}>{T(lang,"بيانات النشاط","Business Information")}</div>
         <input style={S.input} {...{placeholder: t.activityName}} value={form.activityName} onChange={f("activityName")} />
         <input style={S.input} {...{placeholder: t.phone}} value={form.phone} onChange={f("phone")} type="tel" />
         <input style={S.input} {...{placeholder: t.city}} value={form.city} onChange={f("city")} />
@@ -471,7 +469,7 @@ function RegisterPage({ onBack }) {
 }
 
 function AdminDashboard({ token }) {
-  const { t, dir, lang } = useLang();
+  const { lang, dir } = useLang();
   const [saloons, setSaloons] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -612,7 +610,7 @@ function AdminDashboard({ token }) {
 
 
 function AdminBookings({ token, saloons }) {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const today = new Date().toISOString().slice(0, 10);
   const [from, setFrom] = useState(today);
   const [to, setTo] = useState(today);
@@ -726,7 +724,7 @@ function AdminBookings({ token, saloons }) {
 <div class="period">النشاط: ${saloonName} | الفترة: من ${from} إلى ${to}</div>
 <div class="summary">
   <div class="sc"><div class="sn">${data.totalBookings}</div><div class="sl">{T(lang,"إجمالي الحجوزات","Total Bookings")}</div></div>
-  <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">{t.totalAmount}</div></div>
+  <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">{T(lang,"إجمالي المبالغ","Total Revenue")}</div></div>
 </div>
 <table>
   <thead><tr><th>الزبون</th><th>الجوال</th><th>النشاط</th><th>الخدمة</th><th>الموعد</th><th>التاريخ</th><th>المبلغ</th></tr></thead>
@@ -768,7 +766,7 @@ function AdminBookings({ token, saloons }) {
 }
 
 function UsersManager({ token, onMsg }) {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -868,7 +866,7 @@ function UsersManager({ token, onMsg }) {
 }
 
 function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const [tab, setTab] = useState("services");
   const [services, setServices] = useState(saloon.services || []);
   const [days, setDays] = useState(saloon.work_days || []);
@@ -970,7 +968,7 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
 }
 
 function OwnerDashboard({ token, user, initSaloon }) {
-  const { t, dir, lang } = useLang();
+  const { lang, dir } = useLang();
   const [saloon, setSaloon] = useState(initSaloon);
   const [bookings, setBookings] = useState([]);
   const [tab, setTab] = useState("bookings");
@@ -1110,7 +1108,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
 }
 
 function FinancialReport({ token }) {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const today = new Date().toISOString().slice(0, 10);
   const [from, setFrom] = useState(today);
   const [to, setTo] = useState(today);
@@ -1180,7 +1178,7 @@ function FinancialReport({ token }) {
   </div>
   <div class="summary-card">
     <div class="summary-num green">${(report.totalAmount || 0).toLocaleString()} د.إ</div>
-    <div class="summary-label">{t.totalAmount}</div>
+    <div class="summary-label">{T(lang,"إجمالي المبالغ","Total Revenue")}</div>
   </div>
 </div>
 <table>
@@ -1280,7 +1278,7 @@ function FinancialReport({ token }) {
 }
 
 function ServicesEditor({ saloon, token, onSave }) {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const [services, setServices] = useState(saloon.services || []);
   const [loading, setLoading] = useState(false);
   const add = () => setServices(p => [...p, { id: Date.now().toString(), name: "", duration: "30 دقيقة", price: "" }]);
@@ -1312,7 +1310,7 @@ function ServicesEditor({ saloon, token, onSave }) {
 }
 
 function TimesEditor({ saloon, token, onSave }) {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const ALL_DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   const DEFAULT_TIMES = ["8:00 ص","8:30 ص","9:00 ص","9:30 ص","10:00 ص","10:30 ص","11:00 ص","11:30 ص","12:00 م","1:00 م","1:30 م","2:00 م","2:30 م","3:00 م","3:30 م","4:00 م","4:30 م","5:00 م","5:30 م","6:00 م"];
   const [days, setDays] = useState(saloon.workDays || saloon.work_days || []);
@@ -1346,7 +1344,7 @@ function TimesEditor({ saloon, token, onSave }) {
 }
 
 function BookingPage({ slug }) {
-  const { t, dir, lang } = useLang();
+  const { lang, dir } = useLang();
   const [saloon, setSaloon] = useState(null);
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState({ service: null, day: null, time: null });
