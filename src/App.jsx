@@ -340,12 +340,12 @@ function LoginPage({ onAuth, onRegister }) {
   return (
     <div style={S.container}>
       <div style={{ textAlign: "center", marginBottom: "28px", paddingTop: "16px" }}>
-        <div style={{ fontSize: "32px", fontWeight: "900", marginBottom: "6px" }}>أهلاً بك 👋</div>
+        <div style={{ fontSize: "32px", fontWeight: "900", marginBottom: "6px" }}>{t.welcome}</div>
         <div style={{ fontSize: "13px", color: "#888" }}>سجّل دخولك لإدارة نشاطك</div>
       </div>
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
-        <div style={S.sectionTitle}>بيانات الدخول</div>
+        <div style={S.sectionTitle}>{t.loginCredentials}</div>
         <input style={S.input} type="email" {...{placeholder: t.email}} value={email} onChange={e => setEmail(e.target.value)} />
         <input style={S.input} type="password" {...{placeholder: t.password}} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && login()} />
         <button style={S.btn} onClick={login} disabled={loading}>{loading ? t.logging : t.loginBtn}</button>
@@ -432,11 +432,11 @@ function RegisterPage({ onBack }) {
       </div>
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
-        <div style={S.sectionTitle}>بيانات الحساب</div>
+        <div style={S.sectionTitle}>{t.accountData}</div>
         <input style={S.input} {...{placeholder: t.fullName}} value={form.name} onChange={f("name")} />
         <input style={S.input} type="email" {...{placeholder: t.email}} value={form.email} onChange={f("email")} />
         <input style={S.input} type="password" {...{placeholder: t.password}} value={form.password} onChange={f("password")} />
-        <div style={{ ...S.sectionTitle, marginTop: "8px" }}>بيانات النشاط</div>
+        <div style={{ ...S.sectionTitle, marginTop: "8px" }}>{t.activityData}</div>
         <input style={S.input} {...{placeholder: t.activityName}} value={form.activityName} onChange={f("activityName")} />
         <input style={S.input} {...{placeholder: t.phone}} value={form.phone} onChange={f("phone")} type="tel" />
         <input style={S.input} {...{placeholder: t.city}} value={form.city} onChange={f("city")} />
@@ -580,7 +580,7 @@ function AdminDashboard({ token }) {
                     <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>mawids.com/book/{s.slug}</div>
                   </div>
                   <span style={badge(s.status === "active" ? "green" : s.status === "pending" ? "orange" : "")}>
-                    {s.status === "active" ? "نشط" : s.status === "pending" ? "معلق" : "موقوف"}
+                    {s.status === "active" ? {t.activeActivities} : s.status === "pending" ? {t.pendingActivities} : "موقوف"}
                   </span>
                 </div>
                 <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
@@ -1076,7 +1076,7 @@ function OwnerDashboard({ token, user, initSaloon }) {
                 <a href={`tel:+${b.phone.replace(/^0/, "971").replace(/[^0-9]/g, "")}`}
                   style={{ background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#64a0ff", padding: "7px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "700" }}>📞 اتصال</a>
                 <button style={{ ...S.btnDanger, fontSize: "12px" }} onClick={async () => {
-                  if (!window.confirm("هل تريد إلغاء هذا الموعد؟")) return;
+                  if (!window.confirm({t.confirmCancel})) return;
                   try {
                     await api(`/owner/bookings/${b.id}/cancel`, "PATCH", { reason: "اعتذار من صاحب النشاط" }, token);
                     // فتح واتساب برسالة اعتذار
@@ -1220,7 +1220,7 @@ function FinancialReport({ token }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : "عرض التقرير ←"}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : {t.showReport}}</button>
 
       {report && (
         <div style={{ marginTop: "16px" }}>
