@@ -350,15 +350,47 @@ function RegisterPage({ onBack }) {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const f = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
   const submit = async () => {
     if (!form.name || !form.email || !form.password || !form.activityName || !form.phone) return setError("جميع الحقول مطلوبة");
+    if (!agreed) return setError("يجب الموافقة على شروط الاستخدام للمتابعة");
     setLoading(true); setError("");
     try { await api("/auth/register", "POST", form); setDone(true); }
     catch (e) { setError(e.message); }
     finally { setLoading(false); }
   };
+
+  if (showTerms) return (
+    <div style={S.container}>
+      <div style={{ paddingTop: "8px", marginBottom: "16px" }}>
+        <button style={S.btnGhost} onClick={() => setShowTerms(false)}>← رجوع</button>
+      </div>
+      <div style={S.card}>
+        <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", marginBottom: "16px", textAlign: "center" }}>شروط الاستخدام والعقد</div>
+
+        {[
+          { title: "📋 تعريف المنصة", body: "مَوعِد وسيط تقني فقط — توفر الأدوات وتسهّل الخدمة. لا تقدم مَوعِد أي خدمة مباشرة للزبائن. العلاقة التجارية تكون حصراً بين صاحب النشاط وزبونه." },
+          { title: "💰 السياسة المالية", body: "✅ مَوعِد لا تأخذ أي رسوم من الزبائن أبداً وتحت أي ظرف.\n✅ الرسوم تكون حصراً من أصحاب الأنشطة المشتركين.\n✅ أي مبلغ يدفعه الزبون هو لصاحب النشاط مباشرة وليس لمَوعِد.\n⚠️ تتبرأ مَوعِد تماماً من أي نزاع مالي بين صاحب النشاط وزبونه." },
+          { title: "🎁 الفترة التجريبية", body: "التسجيل مجاني تماماً في هذه المرحلة. في حال تغيير السياسة مستقبلاً، سيتم إشعار جميع المشتركين مسبقاً بمدة لا تقل عن 30 يوماً. يحق للمشترك إلغاء حسابه في أي وقت دون أي التزامات." },
+          { title: "✅ مسؤوليات صاحب النشاط", body: "• تقديم معلومات صحيحة عند التسجيل\n• الالتزام بتقديم الخدمات المعلنة\n• التواصل المباشر مع الزبائن وحل أي نزاعات بشكل مستقل\n• المحافظة على سرية بيانات الزبائن" },
+          { title: "⚖️ إخلاء المسؤولية", body: "⚠️ مَوعِد غير مسؤولة عن جودة الخدمات المقدمة من أصحاب الأنشطة.\n⚠️ مَوعِد غير مسؤولة عن أي نزاع بين صاحب النشاط وزبونه.\n⚠️ مَوعِد غير مسؤولة عن أي خسائر ناتجة عن إساءة استخدام المنصة." },
+        ].map((s, i) => (
+          <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(201,168,76,0.1)", borderRadius: "12px", padding: "14px", marginBottom: "10px" }}>
+            <div style={{ fontSize: "12px", fontWeight: "800", color: "#c9a84c", marginBottom: "8px" }}>{s.title}</div>
+            <div style={{ fontSize: "12px", color: "#666", lineHeight: "1.9", whiteSpace: "pre-line" }}>{s.body}</div>
+          </div>
+        ))}
+
+        <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+          <button style={S.btn} onClick={() => { setAgreed(true); setShowTerms(false); }}>✓ أوافق على الشروط</button>
+          <button style={S.btnGhost} onClick={() => setShowTerms(false)}>رجوع</button>
+        </div>
+      </div>
+    </div>
+  );
 
   if (done) return (
     <div style={S.container}>
@@ -387,7 +419,24 @@ function RegisterPage({ onBack }) {
         <input style={S.input} placeholder="اسم النشاط" value={form.activityName} onChange={f("activityName")} />
         <input style={S.input} placeholder="رقم الجوال (واتساب)" value={form.phone} onChange={f("phone")} type="tel" />
         <input style={S.input} placeholder="المدينة (أبوظبي، دبي...)" value={form.city} onChange={f("city")} />
-        <button style={S.btn} onClick={submit} disabled={loading}>{loading ? "جارٍ الإرسال..." : "إرسال الطلب ✓"}</button>
+
+        {/* موافقة الشروط */}
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", padding: "12px", background: "#0c0c0c", borderRadius: "10px", marginBottom: "12px", border: agreed ? "1px solid rgba(201,168,76,0.3)" : "1px solid #1e1e1e" }}>
+          <div onClick={() => setAgreed(!agreed)} style={{ width: "20px", height: "20px", borderRadius: "5px", border: agreed ? "none" : "1px solid #333", background: agreed ? "#c9a84c" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, marginTop: "1px" }}>
+            {agreed && <span style={{ color: "#0c0c0c", fontSize: "12px", fontWeight: "900" }}>✓</span>}
+          </div>
+          <div style={{ fontSize: "12px", color: "#666", lineHeight: "1.7" }}>
+            أوافق على{" "}
+            <span style={{ color: "#c9a84c", cursor: "pointer", fontWeight: "700", textDecoration: "underline" }} onClick={() => setShowTerms(true)}>
+              شروط الاستخدام والعقد التجريبي
+            </span>
+            {" "}وأفهم أن مَوعِد لا تأخذ أي رسوم من الزبائن
+          </div>
+        </div>
+
+        <button style={{ ...S.btn, opacity: agreed ? 1 : 0.5 }} onClick={submit} disabled={loading || !agreed}>
+          {loading ? "جارٍ الإرسال..." : "إرسال الطلب ✓"}
+        </button>
         <div style={{ textAlign: "center", marginTop: "14px", fontSize: "13px" }}>
           <span style={{ color: "#888", cursor: "pointer" }} onClick={onBack}>← رجوع للدخول</span>
         </div>
