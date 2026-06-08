@@ -663,7 +663,7 @@ function AdminBookings({ token, saloons }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? {t.loading} : "عرض الحجوزات ←"}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : "عرض الحجوزات ←"}</button>
 
       {data && (
         <div style={{ marginTop: "16px" }}>
@@ -1220,7 +1220,7 @@ function FinancialReport({ token }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? {t.loading} : "عرض التقرير ←"}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? t.loading : "عرض التقرير ←"}</button>
 
       {report && (
         <div style={{ marginTop: "16px" }}>
