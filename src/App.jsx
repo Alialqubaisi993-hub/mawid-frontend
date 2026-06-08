@@ -311,7 +311,7 @@ function LandingPage({ onLogin, onRegister }) {
       <div style={{ textAlign: "center", padding: "16px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div style={{ fontSize: "12px", color: "#444" }}>© 2025 Mawids.com</div>
         <div style={{ marginTop: "8px" }}>
-          <a href="https://wa.me/971XXXXXXXXX" target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#25d166", textDecoration: "none" }}>
+          <a href="https://wa.me/971508177760" target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#25d166", textDecoration: "none" }}>
             💬 {ar ? "تواصل معنا" : "Contact us"}
           </a>
         </div>
@@ -356,7 +356,7 @@ function LoginPage({ onAuth, onRegister }) {
       </div>
       <div style={{ ...S.card, background: "rgba(37,211,102,0.05)", border: "1px solid rgba(37,211,102,0.15)", textAlign: "center" }}>
         <div style={{ fontSize: "13px", color: "#888", marginBottom: "12px" }}>هل تريد تسجيل نشاطك؟ تواصل معنا</div>
-        <a href="https://wa.me/971XXXXXXXXX?text=أهلاً، أريد تسجيل نشاطي في مَوعِد" target="_blank" rel="noreferrer"
+        <a href="https://wa.me/971508177760?text=أهلاً، أريد تسجيل نشاطي في مَوعِد" target="_blank" rel="noreferrer"
           style={{ display: "inline-block", background: "linear-gradient(135deg,#25d166,#128C7E)", color: "#fff", padding: "10px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", fontWeight: "700" }}>
           💬 تواصل عبر واتساب
         </a>
@@ -1477,4 +1477,3 @@ function BookingPage({ slug }) {
     </div>
   );
 }
-
