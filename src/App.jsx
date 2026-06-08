@@ -1,15 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
+import translations from "./i18n";
+
+const LangContext = createContext({ lang: "ar", t: translations.ar, setLang: () => {} });
+const useLang = () => useContext(LangContext);
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
 
 const S = {
-  app: {
+  app: (dir) => ({
     minHeight: "100vh",
     background: "#0c0c0c",
     fontFamily: "'Cairo', 'Segoe UI', sans-serif",
-    direction: "rtl",
+    direction: dir || "rtl",
     color: "#fff",
-  },
+  }),
   header: {
     background: "#141414",
     backdropFilter: "blur(20px)",
@@ -173,6 +177,15 @@ export default function App() {
     } catch {}
     return "home";
   });
+  const [lang, setLang] = useState(() => localStorage.getItem("mawid_lang") || "ar");
+  const t = translations[lang] || translations.ar;
+  const dir = lang === "ar" ? "rtl" : "ltr";
+
+  useEffect(() => {
+    localStorage.setItem("mawid_lang", lang);
+    document.documentElement.dir = dir;
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   useEffect(() => {
     if (auth) {
@@ -186,29 +199,41 @@ export default function App() {
 
   const logout = () => setAuth(null);
 
-  if (page.startsWith("book:")) return <BookingPage slug={page.split(":")[1]} />;
+  const langValue = { lang, t, setLang, dir };
+
+  if (page.startsWith("book:")) return (
+    <LangContext.Provider value={langValue}>
+      <BookingPage slug={page.split(":")[1]} />
+    </LangContext.Provider>
+  );
 
   return (
-    <div style={S.app}>
-      <header style={S.header}>
-        <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "flex-start" }} onClick={() => !auth && setPage("home")}>
-          <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", letterSpacing: "3px" }}>MAWIDS</div>
-          <div style={{ fontSize: "9px", color: "#555", letterSpacing: "2px", marginTop: "1px" }}>مَوعِد</div>
-        </div>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          {!auth && <>
-            <button style={S.btnGhost} onClick={() => setPage("login")}>دخول</button>
-            <button style={{ ...S.btnGhost, color: "#c9a84c", borderColor: "rgba(255,210,0,0.3)" }} onClick={() => setPage("register")}>سجّل نشاطك</button>
-          </>}
-          {auth && <button style={S.btnGhost} onClick={logout}>خروج ↩</button>}
-        </div>
-      </header>
-      {page === "home" && <LandingPage onLogin={() => setPage("login")} onRegister={() => setPage("register")} />}
-      {page === "login" && <LoginPage onAuth={setAuth} onRegister={() => setPage("register")} />}
-      {page === "register" && <RegisterPage onBack={() => setPage("login")} />}
-      {page === "admin" && auth?.user.role === "admin" && <AdminDashboard token={auth.token} />}
-      {page === "owner" && auth?.user.role === "owner" && <OwnerDashboard token={auth.token} user={auth.user} initSaloon={auth.saloon} />}
-    </div>
+    <LangContext.Provider value={langValue}>
+      <div style={{ ...S.app(dir) }}>
+        <header style={S.header}>
+          <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: dir === "rtl" ? "flex-start" : "flex-end" }} onClick={() => !auth && setPage("home")}>
+            <div style={{ fontSize: "16px", fontWeight: "900", color: "#c9a84c", letterSpacing: "3px" }}>MAWIDS</div>
+            <div style={{ fontSize: "9px", color: "#555", letterSpacing: "2px", marginTop: "1px" }}>مَوعِد</div>
+          </div>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            {/* زر تبديل اللغة */}
+            <button style={{ ...S.btnGhost, fontSize: "11px", padding: "5px 12px" }} onClick={() => setLang(lang === "ar" ? "en" : "ar")}>
+              {lang === "ar" ? "EN" : "ع"}
+            </button>
+            {!auth && <>
+              <button style={S.btnGhost} onClick={() => setPage("login")}>{t.login}</button>
+              <button style={{ ...S.btnGhost, color: "#c9a84c", borderColor: "rgba(201,168,76,0.3)" }} onClick={() => setPage("register")}>{t.register}</button>
+            </>}
+            {auth && <button style={S.btnGhost} onClick={logout}>{t.logout}</button>}
+          </div>
+        </header>
+        {page === "home" && <LandingPage onLogin={() => setPage("login")} onRegister={() => setPage("register")} />}
+        {page === "login" && <LoginPage onAuth={setAuth} onRegister={() => setPage("register")} />}
+        {page === "register" && <RegisterPage onBack={() => setPage("login")} />}
+        {page === "admin" && auth?.user.role === "admin" && <AdminDashboard token={auth.token} />}
+        {page === "owner" && auth?.user.role === "owner" && <OwnerDashboard token={auth.token} user={auth.user} initSaloon={auth.saloon} />}
+      </div>
+    </LangContext.Provider>
   );
 }
 
@@ -302,6 +327,7 @@ function LandingPage({ onLogin, onRegister }) {
 }
 
 function LoginPage({ onAuth, onRegister }) {
+  const { t, dir } = useLang();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -326,9 +352,9 @@ function LoginPage({ onAuth, onRegister }) {
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
         <div style={S.sectionTitle}>بيانات الدخول</div>
-        <input style={S.input} type="email" placeholder="البريد الإلكتروني" value={email} onChange={e => setEmail(e.target.value)} />
-        <input style={S.input} type="password" placeholder="كلمة المرور" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && login()} />
-        <button style={S.btn} onClick={login} disabled={loading}>{loading ? "جارٍ الدخول..." : "دخول ←"}</button>
+        <input style={S.input} type="email" {...{placeholder: t.email}} value={email} onChange={e => setEmail(e.target.value)} />
+        <input style={S.input} type="password" {...{placeholder: t.password}} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && login()} />
+        <button style={S.btn} onClick={login} disabled={loading}>{loading ? t.logging : t.loginBtn}</button>
         <div style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#888" }}>
           ما عندك حساب؟{" "}
           <span style={{ color: "#c9a84c", cursor: "pointer", fontWeight: "700" }} onClick={onRegister}>سجّل نشاطك مجاناً</span>
@@ -346,6 +372,7 @@ function LoginPage({ onAuth, onRegister }) {
 }
 
 function RegisterPage({ onBack }) {
+  const { t, dir } = useLang();
   const [form, setForm] = useState({ name: "", email: "", password: "", activityName: "", phone: "", city: "" });
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
@@ -412,13 +439,13 @@ function RegisterPage({ onBack }) {
       <div style={S.card}>
         {error && <div style={S.error}>{error}</div>}
         <div style={S.sectionTitle}>بيانات الحساب</div>
-        <input style={S.input} placeholder="اسمك" value={form.name} onChange={f("name")} />
-        <input style={S.input} type="email" placeholder="البريد الإلكتروني" value={form.email} onChange={f("email")} />
-        <input style={S.input} type="password" placeholder="كلمة المرور" value={form.password} onChange={f("password")} />
+        <input style={S.input} {...{placeholder: t.fullName}} value={form.name} onChange={f("name")} />
+        <input style={S.input} type="email" {...{placeholder: t.email}} value={form.email} onChange={f("email")} />
+        <input style={S.input} type="password" {...{placeholder: t.password}} value={form.password} onChange={f("password")} />
         <div style={{ ...S.sectionTitle, marginTop: "8px" }}>بيانات النشاط</div>
-        <input style={S.input} placeholder="اسم النشاط" value={form.activityName} onChange={f("activityName")} />
-        <input style={S.input} placeholder="رقم الجوال (واتساب)" value={form.phone} onChange={f("phone")} type="tel" />
-        <input style={S.input} placeholder="المدينة (أبوظبي، دبي...)" value={form.city} onChange={f("city")} />
+        <input style={S.input} {...{placeholder: t.activityName}} value={form.activityName} onChange={f("activityName")} />
+        <input style={S.input} {...{placeholder: t.phone}} value={form.phone} onChange={f("phone")} type="tel" />
+        <input style={S.input} {...{placeholder: t.city}} value={form.city} onChange={f("city")} />
 
         {/* موافقة الشروط */}
         <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", padding: "12px", background: "#0c0c0c", borderRadius: "10px", marginBottom: "12px", border: agreed ? "1px solid rgba(201,168,76,0.3)" : "1px solid #1e1e1e" }}>
@@ -435,7 +462,7 @@ function RegisterPage({ onBack }) {
         </div>
 
         <button style={{ ...S.btn, opacity: agreed ? 1 : 0.5 }} onClick={submit} disabled={loading || !agreed}>
-          {loading ? "جارٍ الإرسال..." : "إرسال الطلب ✓"}
+          {loading ? t.sending : t.sendRequest}
         </button>
         <div style={{ textAlign: "center", marginTop: "14px", fontSize: "13px" }}>
           <span style={{ color: "#888", cursor: "pointer" }} onClick={onBack}>← رجوع للدخول</span>
@@ -446,6 +473,7 @@ function RegisterPage({ onBack }) {
 }
 
 function AdminDashboard({ token }) {
+  const { t, dir } = useLang();
   const [saloons, setSaloons] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -641,7 +669,7 @@ function AdminBookings({ token, saloons }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? "جارٍ التحميل..." : "عرض الحجوزات ←"}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? {t.loading} : "عرض الحجوزات ←"}</button>
 
       {data && (
         <div style={{ marginTop: "16px" }}>
@@ -797,8 +825,8 @@ function UsersManager({ token, onMsg }) {
         <div style={{ background: "#141414", borderRadius: "12px", padding: "16px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
           <div style={{ fontSize: "12px", color: "#c9a84c", fontWeight: "700", marginBottom: "10px" }}>مستخدم جديد</div>
           <input style={S.input} placeholder="الاسم" value={form.name} onChange={f("name")} />
-          <input style={S.input} placeholder="البريد الإلكتروني" type="email" value={form.email} onChange={f("email")} />
-          <input style={S.input} placeholder="كلمة المرور" type="password" value={form.password} onChange={f("password")} />
+          <input style={S.input} {...{placeholder: t.email}} type="email" value={form.email} onChange={f("email")} />
+          <input style={S.input} {...{placeholder: t.password}} type="password" value={form.password} onChange={f("password")} />
           <select style={{ ...S.input, marginBottom: "10px" }} value={form.role} onChange={f("role")}>
             <option value="owner">صاحب نشاط</option>
             <option value="admin">مدير</option>
@@ -941,6 +969,7 @@ function AdminSaloonEditor({ saloon, token, onBack, onMsg }) {
 }
 
 function OwnerDashboard({ token, user, initSaloon }) {
+  const { t, dir } = useLang();
   const [saloon, setSaloon] = useState(initSaloon);
   const [bookings, setBookings] = useState([]);
   const [tab, setTab] = useState("bookings");
@@ -1197,7 +1226,7 @@ function FinancialReport({ token }) {
           <input type="date" style={S.input} value={to} onChange={e => setTo(e.target.value)} />
         </div>
       </div>
-      <button style={S.btn} onClick={load} disabled={loading}>{loading ? "جارٍ التحميل..." : "عرض التقرير ←"}</button>
+      <button style={S.btn} onClick={load} disabled={loading}>{loading ? {t.loading} : "عرض التقرير ←"}</button>
 
       {report && (
         <div style={{ marginTop: "16px" }}>
@@ -1313,6 +1342,7 @@ function TimesEditor({ saloon, token, onSave }) {
 }
 
 function BookingPage({ slug }) {
+  const { t, dir } = useLang();
   const [saloon, setSaloon] = useState(null);
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState({ service: null, day: null, time: null });
@@ -1437,8 +1467,8 @@ function BookingPage({ slug }) {
               <div style={S.card}>
                 <div style={S.sectionTitle}>بياناتك</div>
                 {error && <div style={S.error}>{error}</div>}
-                <input style={S.input} placeholder="اسمك الكريم" value={name} onChange={e => setName(e.target.value)} />
-                <input style={S.input} placeholder="رقم الجوال" value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
+                <input style={S.input} {...{placeholder: t.yourName}} value={name} onChange={e => setName(e.target.value)} />
+                <input style={S.input} {...{placeholder: t.yourPhone}} value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
                 <div style={{ padding: "12px", background: "rgba(201,168,76,0.06)", borderRadius: "10px", marginBottom: "12px", fontSize: "13px", lineHeight: "2", color: "#ccc" }}>
                   <div>📋 <strong style={{ color: "#fff" }}>{selected.service}</strong></div>
                   <div>📅 <strong style={{ color: "#fff" }}>{selected.day}</strong></div>
