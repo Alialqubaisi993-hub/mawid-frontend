@@ -684,7 +684,7 @@ function AdminBookings({ token, saloons }) {
 
           {/* زر PDF */}
           <button style={{ ...S.btnGhost, width: "100%", marginBottom: "14px", color: "#c9a84c", borderColor: "rgba(201,168,76,0.3)" }} onClick={() => {
-            const saloonName = saloonId ? saloons?.find(s => s.id === saloonId)?.name || lang === "ar" ? {T(lang,"كل الأنشطة","All Businesses")} : "All Businesses" : lang === "ar" ? {T(lang,"كل الأنشطة","All Businesses")} : "All Businesses";
+            const saloonName = saloonId ? saloons?.find(s => s.id === saloonId)?.name || T(lang,"كل الأنشطة","All Businesses") : T(lang,"كل الأنشطة","All Businesses");
             const rows = (data.bookings || []).map(b =>
               `<tr>
                 <td style="padding:8px 10px; border-bottom:1px solid #eee;">${b.name}</td>
@@ -723,8 +723,8 @@ function AdminBookings({ token, saloons }) {
 <div class="sub">Mawids.com — منصة إدارة الحجوزات</div>
 <div class="period">النشاط: ${saloonName} | الفترة: من ${from} إلى ${to}</div>
 <div class="summary">
-  <div class="sc"><div class="sn">${data.totalBookings}</div><div class="sl">{T(lang,"إجمالي الحجوزات","Total Bookings")}</div></div>
-  <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">{T(lang,"إجمالي المبالغ","Total Revenue")}</div></div>
+  <div class="sc"><div class="sn">${data.totalBookings}</div><div class="sl">${T(lang,"إجمالي الحجوزات","Total Bookings")}</div></div>
+  <div class="sc"><div class="sn green">${(data.totalAmount||0).toLocaleString()} د.إ</div><div class="sl">${T(lang,"إجمالي المبالغ","Total Revenue")}</div></div>
 </div>
 <table>
   <thead><tr><th>الزبون</th><th>الجوال</th><th>النشاط</th><th>الخدمة</th><th>الموعد</th><th>التاريخ</th><th>المبلغ</th></tr></thead>
